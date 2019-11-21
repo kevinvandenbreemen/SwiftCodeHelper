@@ -14,6 +14,9 @@ let package = Package(
         .target(
             name: "SwiftCodeHelper",
             dependencies: ["SwiftAST+Tooling"]),
+        .target(name: "SwiftCodeHelperDemo",
+            dependencies: ["SwiftCodeHelper"]
+        ),
         .testTarget(
             name: "SwiftCodeHelperTests",
             dependencies: ["SwiftCodeHelper"]),

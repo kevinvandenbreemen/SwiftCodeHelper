@@ -2,6 +2,8 @@ import AST
 import Parser
 import Source
 
-class SourceFileParser {
-    
+public class SourceFileParser {
+
+    public init(){}
+
 }
