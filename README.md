@@ -1,3 +1,3 @@
 # SwiftCodeHelper
 
-A description of this package.
+Some experiments with using Swift for parsing code
