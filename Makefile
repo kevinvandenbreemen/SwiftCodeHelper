@@ -19,3 +19,4 @@ cleanup:
 
 buildAndTest: cleanup
 	swift build
+	swift run SwiftCodeHelperDemo
