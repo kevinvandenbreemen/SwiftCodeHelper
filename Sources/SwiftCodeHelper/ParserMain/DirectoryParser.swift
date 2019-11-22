@@ -24,17 +24,24 @@ public class DirectoryParser {
             let items = try fileManager.contentsOfDirectory(atPath: config.path)
 
             //  Step 2:  Iterate thru all the files
+
+            var isDirectory: ObjCBool = false
             items.forEach{ file in 
 
                 let path = "\(config.path)\(file)"
-                print("path?  \(path)")
+
+                fileManager.fileExists(atPath: path, isDirectory: &isDirectory)
+                if isDirectory.boolValue {
+                    print("TODO - recurse in \(path)")
+                    return
+                }
 
                 logger.info("Parsing file \(path)")
                 SourceFileParser(filePath: path, visitor: visitor).parse()
 
             }
         } catch let error {
-            logger.critical("Failed to load contents of directory \(config.path)")
+            logger.critical("Failed to load contents of directory \(config.path) due to \n\(error)")
         }
     }
     
