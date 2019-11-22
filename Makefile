@@ -19,4 +19,4 @@ cleanup:
 
 buildAndTest: cleanup
 	swift build
-	swift run SwiftCodeHelperDemo
+	swift run SwiftCodeHelperDemo -f ./testResources/swift/

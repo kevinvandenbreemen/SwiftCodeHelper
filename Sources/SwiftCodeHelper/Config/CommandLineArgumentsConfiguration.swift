@@ -3,7 +3,7 @@ import CommandLineKit
 /// Configuration for executing the program.  This class handles determining exactly what is being parsed
 public class CommandLineArgumentsConfiguration: RunConfiguration {
 
-    public private(set) var path: String!
+    public private(set) var path: String
 
     public init() throws {
 

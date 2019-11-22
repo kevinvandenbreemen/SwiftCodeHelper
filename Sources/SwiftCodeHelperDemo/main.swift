@@ -16,6 +16,7 @@ parser.parse()
 do {
     let configuratino: RunConfiguration = try CommandLineArgumentsConfiguration()
     let dirParser = try DirectoryParser(configuration: configuratino, visitor: consoleDoc)
+    dirParser.parse()
 } catch let error {
     print(error)
 }
