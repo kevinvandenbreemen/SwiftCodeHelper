@@ -13,7 +13,8 @@ print("Built a parser!")
 parser.parse()
 
 
-let builder = SystemModellingVisitor()
+let modelBuilder = SystemModelBuilder()
+let builder = SystemModellingVisitor(builder: modelBuilder)
 do {
     let configuration: RunConfiguration = try CommandLineArgumentsConfiguration()
     let dirParser = try DirectoryParser(configuration: configuration, visitor: builder)
@@ -21,3 +22,6 @@ do {
 } catch let error {
     print(error)
 }
+
+let display = ConsoleDebuggingModelDisplay()
+display.display(model:  modelBuilder.systemModel)

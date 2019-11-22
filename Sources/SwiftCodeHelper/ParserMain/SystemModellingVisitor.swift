@@ -8,10 +8,11 @@ public class SystemModellingVisitor: ASTVisitor {
         self.builder = builder
     }
     
-    public func visit(_ classDeclaration: ClassDeclaration) {
+    public func visit(_ classDeclaration: ClassDeclaration)  throws -> Bool {
         let className = String(describing: classDeclaration.name)
         let clz = Class(name: className)
         builder.addClass(clz: clz)
+        return true
     }
     
 

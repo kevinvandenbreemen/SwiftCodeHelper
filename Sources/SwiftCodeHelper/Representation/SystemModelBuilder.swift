@@ -1,6 +1,6 @@
 public class SystemModelBuilder {
 
-    private let systemModel: SystemModel
+    public let systemModel: SystemModel
 
     
     public init(systemModel model: SystemModel = SystemModel()) {

@@ -1,6 +1,6 @@
 public class SystemModel {
 
-    private var classes: [Class]
+    var classes: [Class]
     
     public init() {
         self.classes = []
