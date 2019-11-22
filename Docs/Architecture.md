@@ -3,6 +3,7 @@
 - [Model of System Being Documented](#model-of-system-being-documented)
   - [The SystemModelBuilder](#the-systemmodelbuilder)
   - [Feeding into the SystemModelBuilder](#feeding-into-the-systemmodelbuilder)
+- [Displaying the Model](#displaying-the-model)
 
 # Over-arching Systems
 
@@ -21,3 +22,11 @@ SystemModels themselves are simple objects intended for use by renderers.  They 
 
 ## Feeding into the SystemModelBuilder
 SystemModelBuilders themselves are driven by a SystemModellingVisitor, which is an implementation of the ASTVisitor protocol.  The model representation is thus constructed via standard AST method.
+
+# Displaying the Model
+
+The system provides a display protocol that can be used to render the software system visually:
+
+![](resource/SwiftCodeHelper-View.svg)
+
+To render a model simply get an instance of ModelDisplay and call display() with the model you wish to render.
