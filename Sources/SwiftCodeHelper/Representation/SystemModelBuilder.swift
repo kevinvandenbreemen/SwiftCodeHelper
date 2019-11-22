@@ -1,9 +1,9 @@
-class SystemModelBuilder {
+public class SystemModelBuilder {
 
     private let systemModel: SystemModel
 
     
-    init(systemModel model: SystemModel = SystemModel()) {
+    public init(systemModel model: SystemModel = SystemModel()) {
         self.systemModel = model
     }
     

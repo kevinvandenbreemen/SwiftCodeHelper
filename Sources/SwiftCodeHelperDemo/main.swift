@@ -13,9 +13,10 @@ print("Built a parser!")
 parser.parse()
 
 
+let builder = SystemModellingVisitor()
 do {
-    let configuratino: RunConfiguration = try CommandLineArgumentsConfiguration()
-    let dirParser = try DirectoryParser(configuration: configuratino, visitor: consoleDoc)
+    let configuration: RunConfiguration = try CommandLineArgumentsConfiguration()
+    let dirParser = try DirectoryParser(configuration: configuration, visitor: builder)
     dirParser.parse()
 } catch let error {
     print(error)

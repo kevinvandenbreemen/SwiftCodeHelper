@@ -1,13 +1,18 @@
 import AST
 
-class SystemModellingVisitor: ASTVisitor {
+public class SystemModellingVisitor: ASTVisitor {
 
     private let builder: SystemModelBuilder
     
-    init(builder: SystemModelBuilder = SystemModelBuilder() ) {
+    public init(builder: SystemModelBuilder = SystemModelBuilder() ) {
         self.builder = builder
     }
     
+    public func visit(_ classDeclaration: ClassDeclaration) {
+        let className = String(describing: classDeclaration.name)
+        let clz = Class(name: className)
+        builder.addClass(clz: clz)
+    }
     
 
 }

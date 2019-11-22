@@ -21,7 +21,6 @@ public class SourceFileParser {
 
             //  Now do the parsing
             if let visitor = self.visitor {
-                print("Traversing the code with visitor of type \(type(of: visitor))")
                 try visitor.traverse(topLevelDecl)
             } else {
                 for statement in topLevelDecl.statements {

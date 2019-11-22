@@ -1,8 +1,8 @@
-class SystemModel {
+public class SystemModel {
 
     private var classes: [Class]
     
-    init() {
+    public init() {
         self.classes = []
     }
     
