@@ -4,6 +4,7 @@
   - [The SystemModelBuilder](#the-systemmodelbuilder)
   - [Feeding into the SystemModelBuilder](#feeding-into-the-systemmodelbuilder)
 - [Displaying the Model](#displaying-the-model)
+  - [Cacao Display](#cacao-display)
 
 # Over-arching Systems
 
@@ -30,3 +31,6 @@ The system provides a display protocol that can be used to render the software s
 ![](resource/SwiftCodeHelper-View.svg)
 
 To render a model simply get an instance of ModelDisplay and call display() with the model you wish to render.
+
+## Cacao Display
+In the works is a display implementation that will use the Cacao lib (a sort of UIKit for Linux) to display the system model on Linux machines.
