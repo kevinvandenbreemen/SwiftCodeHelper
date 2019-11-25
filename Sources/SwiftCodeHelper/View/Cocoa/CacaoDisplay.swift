@@ -4,6 +4,8 @@ public class CacaoDisplay: ModelDisplay {
 
     private lazy var driver: CacaoDriver = {
         let driver = CacaoDriver.init(drawingViewController: DrawingViewController())
+
+        //  Fire up the UI
         driver.startup()
         return driver
     }()
@@ -13,7 +15,7 @@ public class CacaoDisplay: ModelDisplay {
     }
 
     public func display(model: SystemModel) {
-        self.driver.drawingViewController.updateModel(with: model)
+        self.driver.update(with: model)
     }
 
 }

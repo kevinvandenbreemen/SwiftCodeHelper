@@ -15,4 +15,8 @@ class CacaoDriver {
         UIApplicationMain(delegate: CacaoAppDelegate.init(drawingViewController: drawingViewController), options: options)
     }
 
+    func update(with model: SystemModel) {
+        self.drawingViewController.updateModel(with: model)
+    }
+
 }
