@@ -23,5 +23,5 @@ do {
     print(error)
 }
 
-let display = ConsoleDebuggingModelDisplay()
+let display = CacaoDisplay()
 display.display(model:  modelBuilder.systemModel)

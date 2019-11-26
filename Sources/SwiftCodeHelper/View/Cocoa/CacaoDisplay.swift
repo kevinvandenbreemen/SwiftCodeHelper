@@ -1,21 +1,25 @@
 import Cacao
+import Logging
+import Foundation
 
 public class CacaoDisplay: ModelDisplay {
 
-    private lazy var driver: CacaoDriver = {
-        let driver = CacaoDriver.init(drawingViewController: DrawingViewController())
-
-        //  Fire up the UI
-        driver.startup()
-        return driver
-    }()
+    private var logger: Logger
     
     public init() {
-        
+        self.logger = Logger.init(label: "Cocoa.CocoaDisplay")
+        self.logger.logLevel = .debug
     }
 
     public func display(model: SystemModel) {
-        self.driver.update(with: model)
+        logger.debug("Display updating model to \(model)")
+
+        let viewController = DrawingViewController.init(model: model)
+        var options = CacaoOptions()
+        options.windowName = "Software System Model Display"
+
+        logger.debug("Starting the app!")
+        UIApplicationMain(delegate: CacaoAppDelegate.init(drawingViewController: viewController), options: options)
     }
 
 }

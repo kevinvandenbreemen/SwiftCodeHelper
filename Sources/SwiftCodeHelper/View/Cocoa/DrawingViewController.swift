@@ -1,13 +1,29 @@
 import Cacao
 import Foundation
+import Logging
 
 /// Displays a vector drawing
 class DrawingViewController: UIViewController, UIScrollViewDelegate {
+
+    private var logger: Logger
 
     var titleView: UILabel!
     var contentScroller: UIScrollView!
     var sidePanelContainer: UIView!
     var diagram: DiagramView!
+    private let model: SystemModel
+    
+    init(model: SystemModel) {
+
+        self.model = model
+
+        self.logger = Logger.init(label: "Cocao.DrawingViewController")
+        self.logger.logLevel = .debug
+
+        super.init()
+        
+    }
+    
 
     override func loadView() {
 
@@ -24,8 +40,10 @@ class DrawingViewController: UIViewController, UIScrollViewDelegate {
         let sidePanel = setupSidePane()
         view.addSubview(sidePanel)
 
-        self.diagram = DiagramView.init()
+        self.diagram = DiagramView.init(frame: self.view.frame, model: model)
         self.contentScroller.addSubview(diagram)
+
+        logger.debug("View Load Complete")
     }
 
     private func setupTitle() -> UILabel {
@@ -77,11 +95,6 @@ class DrawingViewController: UIViewController, UIScrollViewDelegate {
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print("Scroll")
-    }
-
-    func updateModel(with model: SystemModel)  {
-        self.diagram.update(withModel: model)
-        self.diagram.setNeedsDisplay()
     }
 
 }
