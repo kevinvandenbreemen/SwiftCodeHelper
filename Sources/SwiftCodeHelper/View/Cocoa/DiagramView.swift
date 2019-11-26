@@ -47,17 +47,16 @@ class DiagramView: UIView {
 
         }
 
-        model_arrangement_ArrangeRectangles(modelArrangementQueue)
+        withUnsafeMutablePointer(to: &modelArrangementHead) { model_arrangement_ArrangeRectangles($0) }
 
         //  Convert the queue to an array
-        var currentModelArrangementNode: model_arrangement_rect_node? = modelArrangementQueue.pointee
+        var currentModelArrangementNode : model_arrangement_rect_node? = modelArrangementHead
         var modelArrangementRects: [model_arrangement_rect] = []
         repeat {
             if let currentNode = currentModelArrangementNode {
                 modelArrangementRects.append(currentNode.rect.pointee)
                 currentModelArrangementNode = currentNode.next.pointee
             }
-            
         } while currentModelArrangementNode != nil
 
         logger.debug("Got \(modelArrangementRects)")
