@@ -34,10 +34,12 @@ class DiagramView: UIView {
         let modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
         var modelArrangementCurrent = modelArrangementHead
 
+        var classConfig = model_rect_config()
+
         model.classes.forEach{ clz in 
 
             let typeName = UnsafeMutablePointer<CChar>(mutating: clz.name)
-            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, 0) else {
+            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, 0, &classConfig) else {
                 logger.error("Failed to compute rect for type \(typeName)")
                 return
             }
