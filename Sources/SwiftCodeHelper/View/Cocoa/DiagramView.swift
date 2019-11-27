@@ -31,38 +31,44 @@ class DiagramView: UIView {
 
         logger.debug("Drawing the model...")
 
-        var modelArrangementHead = model_arrangement_rect_node()
+        var modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
         var modelArrangementCurrent = modelArrangementHead
 
         model.classes.forEach{ clz in 
 
             let typeName = UnsafeMutablePointer<CChar>(mutating: clz.name)
-            var dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, 0)
-            print("Dim Rect [\(clz.name)]=\(dimensionsRect)")
-            modelArrangementCurrent.rect = withUnsafeMutablePointer(to: &dimensionsRect) { $0 }
+            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, 0) else {
+                logger.error("Failed to compute rect for type \(typeName)")
+                return
+            }
+            print("Dim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
+            modelArrangementCurrent.pointee.rect = dimensionsRect
 
-            var next = model_arrangement_rect_node()
-            modelArrangementHead.next = withUnsafeMutablePointer(to: &next) { $0 }
-            modelArrangementHead = next
+            guard let next = model_arrangement_new_rect_node() else {
+                logger.error("Failed to create storage node")
+                return
+            }
+            modelArrangementCurrent.pointee.next = next
+            modelArrangementCurrent = next
 
         }
 
-        withUnsafeMutablePointer(to: &modelArrangementHead) { model_arrangement_ArrangeRectangles($0) }
+        model_arrangement_ArrangeRectangles(modelArrangementHead)
 
         //  Convert the queue to an array
-        var currentModelArrangementNode : model_arrangement_rect_node? = modelArrangementHead
-        var modelArrangementRects: [model_arrangement_rect] = []
-        repeat {
-            if let currentNode = currentModelArrangementNode {
-                modelArrangementRects.append(currentNode.rect.pointee)
-                currentModelArrangementNode = currentNode.next.pointee
-            }
-        } while currentModelArrangementNode != nil
+        // var currentModelArrangementNode : model_arrangement_rect_node? = modelArrangementHead
+        // var modelArrangementRects: [model_arrangement_rect] = []
+        // repeat {
+        //     if let currentNode = currentModelArrangementNode {
+        //         modelArrangementRects.append(currentNode.rect.pointee)
+        //         currentModelArrangementNode = currentNode.next.pointee
+        //     }
+        // } while currentModelArrangementNode != nil
 
-        logger.debug("Got \(modelArrangementRects)")
-        modelArrangementRects.forEach{ rect in 
-            logger.debug("\(rect)")
-        }
+        // logger.debug("Got \(modelArrangementRects)")
+        // modelArrangementRects.forEach{ rect in 
+        //     logger.debug("\(rect)")
+        // }
 
         // let littleRectangle = CGRect.init(x: rect.origin.x + 10, y: rect.origin.y + 10, width: 100, height: 100)
 

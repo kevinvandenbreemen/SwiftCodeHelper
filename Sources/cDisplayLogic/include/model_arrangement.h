@@ -26,11 +26,20 @@ typedef struct _rect_node {
     struct _rect_node *next;
 } model_arrangement_rect_node;
 
+model_arrangement_rect_node *model_arrangement_new_rect_node();
+model_arrangement_rect_node *model_arrangement_new_rect_node() {
+    model_arrangement_rect_node *ret = malloc(sizeof(model_arrangement_rect_node));
+    ret->next = 0;
+    ret->rect = malloc(sizeof(model_arrangement_rect));
+
+    return ret;
+}
+
 /*
  * Compute appropriate width and height for the given string
  */
-model_arrangement_rect model_arrangement_computeRectDimensionsFor(char *name, int glyth_square_size);
-model_arrangement_rect model_arrangement_computeRectDimensionsFor(char *name, int glyth_square_size) {
+model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, int glyth_square_size);
+model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, int glyth_square_size) {
 
     int length = 0;
     do {
@@ -44,9 +53,9 @@ model_arrangement_rect model_arrangement_computeRectDimensionsFor(char *name, in
         glyphSize = GLYPH_SQR_PXL;
     }
 
-    model_arrangement_rect ret;
-    ret.height = (float)glyphSize;
-    ret.width = (float)(length * glyphSize);
+    model_arrangement_rect *ret = malloc(sizeof(model_arrangement_rect));
+    ret->height = (float)glyphSize;
+    ret->width = (float)(length * glyphSize);
 
     return ret;
 
