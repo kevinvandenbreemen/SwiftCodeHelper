@@ -31,7 +31,7 @@ class DiagramView: UIView {
 
         logger.debug("Drawing the model...")
 
-        var modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
+        let modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
         var modelArrangementCurrent = modelArrangementHead
 
         model.classes.forEach{ clz in 
@@ -41,7 +41,11 @@ class DiagramView: UIView {
                 logger.error("Failed to compute rect for type \(typeName)")
                 return
             }
-            print("Dim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
+            
+            if logger.logLevel == .debug {
+                print("Dim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
+            }
+            
             modelArrangementCurrent.pointee.rect = dimensionsRect
 
             guard let next = model_arrangement_new_rect_node() else {
@@ -70,7 +74,10 @@ class DiagramView: UIView {
             }
         } while currentModelArrangementNode != nil
 
-        logger.debug("Got \(modelArrangementRects)")
+        if logger.logLevel == .debug {
+            logger.debug("Got \(modelArrangementRects)")
+        }
+        
         modelArrangementRects.forEach{ rect in 
             
             let classRect = CGRect.init(x: CGFloat(rect.x), y: CGFloat(rect.y), width: CGFloat(rect.width), height: CGFloat(rect.height))

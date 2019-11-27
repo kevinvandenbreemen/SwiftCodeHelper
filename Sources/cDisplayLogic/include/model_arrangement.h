@@ -81,14 +81,10 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
     
     while (currentNode != NULL) {
 
-        printf("Processing node...\n");
-
         rect = currentNode -> rect;
         if(rect == NULL) {
             fprintf(stderr, "Node has a NULL rect!\n");
         }
-
-        printf("width=%f\n", rect->width);
 
         rect->x = xDist + 10.0;
         rect->y = yDist + 10.0;
