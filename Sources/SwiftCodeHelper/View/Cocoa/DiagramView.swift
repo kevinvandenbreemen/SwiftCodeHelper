@@ -33,6 +33,7 @@ class DiagramView: UIView {
 
         let modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
         var modelArrangementCurrent = modelArrangementHead
+        var previousArrangementNode: UnsafeMutablePointer<model_arrangement_rect_node>? = nil
 
         var classConfig = model_rect_config()
 
@@ -55,8 +56,13 @@ class DiagramView: UIView {
                 return
             }
             modelArrangementCurrent.pointee.next = next
+            previousArrangementNode = modelArrangementCurrent
             modelArrangementCurrent = next
 
+        }
+
+        if let nodeBeforeLast = previousArrangementNode {
+            nodeBeforeLast.pointee.next = nil
         }
 
         model_arrangement_ArrangeRectangles(modelArrangementHead)
@@ -80,12 +86,24 @@ class DiagramView: UIView {
             logger.debug("Got \(modelArrangementRects)")
         }
         
+        var clzIndex = 0
         modelArrangementRects.forEach{ rect in 
-            
+            logger.debug("Trying to create labelled box")
+            guard let lbr:model_arrangement_rect = rect.label_rect.pointee else {
+                return
+            }
+
             let classRect = CGRect.init(x: CGFloat(rect.x), y: CGFloat(rect.y), width: CGFloat(rect.width), height: CGFloat(rect.height))
+            let classLabelRect = CGRect.init(x: CGFloat(lbr.x), y: CGFloat(lbr.y), width: CGFloat(lbr.width), height: CGFloat(lbr.height))
             let classBox = UIBezierPath.init(rect: classRect)
             classBox.lineWidth = 2.0
             classBox.stroke()
+            
+            let label = UILabel.init(frame: classLabelRect)
+            label.text = model.classes[clzIndex].name
+            addSubview(label)
+
+            clzIndex += 1
 
         }
 
