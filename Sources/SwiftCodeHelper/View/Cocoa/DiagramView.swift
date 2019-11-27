@@ -56,19 +56,29 @@ class DiagramView: UIView {
         model_arrangement_ArrangeRectangles(modelArrangementHead)
 
         //  Convert the queue to an array
-        // var currentModelArrangementNode : model_arrangement_rect_node? = modelArrangementHead
-        // var modelArrangementRects: [model_arrangement_rect] = []
-        // repeat {
-        //     if let currentNode = currentModelArrangementNode {
-        //         modelArrangementRects.append(currentNode.rect.pointee)
-        //         currentModelArrangementNode = currentNode.next.pointee
-        //     }
-        // } while currentModelArrangementNode != nil
+        var currentModelArrangementNode : model_arrangement_rect_node? = modelArrangementHead.pointee
+        var modelArrangementRects: [model_arrangement_rect] = []
+        repeat {
+            if let currentNode = currentModelArrangementNode {
+                modelArrangementRects.append(currentNode.rect.pointee)
 
-        // logger.debug("Got \(modelArrangementRects)")
-        // modelArrangementRects.forEach{ rect in 
-        //     logger.debug("\(rect)")
-        // }
+                if let nextPointer = currentNode.next {
+                    currentModelArrangementNode = nextPointer.pointee
+                } else {
+                    currentModelArrangementNode = nil
+                }
+            }
+        } while currentModelArrangementNode != nil
+
+        logger.debug("Got \(modelArrangementRects)")
+        modelArrangementRects.forEach{ rect in 
+            
+            let classRect = CGRect.init(x: CGFloat(rect.x), y: CGFloat(rect.y), width: CGFloat(rect.width), height: CGFloat(rect.height))
+            let classBox = UIBezierPath.init(rect: classRect)
+            classBox.lineWidth = 2.0
+            classBox.stroke()
+
+        }
 
         // let littleRectangle = CGRect.init(x: rect.origin.x + 10, y: rect.origin.y + 10, width: 100, height: 100)
 
