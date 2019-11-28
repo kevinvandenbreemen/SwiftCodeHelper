@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 //  Default of a glyth on the screen for computing approximate size of rects for display on the screen
-#define GLYPH_SQR_PXL 30
+#define GLYPH_SQR_PXL 50
 
 
 /*
@@ -69,7 +69,7 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, i
     ret->width = (float)(length * glyphSize);
 
     model_arrangement_rect *labelRect = malloc(sizeof(model_arrangement_rect));
-    labelRect->width = length * glyphSize;
+    labelRect->width = (length * glyphSize) -  glyphSize;
     labelRect->height = glyphSize;
     ret -> label_rect = labelRect;
     ret -> config = config;
@@ -105,7 +105,7 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
         rect->x = xDist + 10.0;
         rect->y = yDist + 10.0;
 
-        xDist += (rect->width)+10.0;
+        
 
         //  Now compute position of label if present
         if(rect -> label_rect != NULL) {
@@ -120,9 +120,15 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
             //  TODO:  Make this configurable (see rect->config later on!)
             heightDifference /= 2;
 
+            printf("wDiff=%f, hDiff=%f (parentW=%f, parentH=%f vs labelW=%f, labelH=%f)\n", widthDifference, heightDifference, rect->width, rect->height, 
+                labelRect->width, labelRect->height
+            );
+
             labelRect -> x = (xDist + widthDifference);
             labelRect -> y = (yDist + heightDifference);
         }
+
+        xDist += (rect->width)+10.0;
 
         currentNode = currentNode -> next;
     }
