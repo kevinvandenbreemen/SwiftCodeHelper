@@ -5,14 +5,16 @@
 #include <stdio.h>
 
 //  Default of a glyth on the screen for computing approximate size of rects for display on the screen
-#define GLYPH_SQR_PXL 50
+#define GLYPH_WDT_PXL 30
+#define GLYPH_HGT_PXL 40
 
 
 /*
  * Configurations for how to go about creating a rectangle for a model
  */
 typedef struct _model_rect_config {
-
+    int glyphWidth;
+    int glythHeight;
 } model_rect_config;
 
 /*
@@ -49,8 +51,8 @@ model_arrangement_rect_node *model_arrangement_new_rect_node() {
 /*
  * Compute appropriate width and height for the given string
  */
-model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, int glyth_square_size, model_rect_config *config);
-model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, int glyth_square_size, model_rect_config *config) {
+model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, model_rect_config *config);
+model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, model_rect_config *config) {
 
     int length = 0;
     do {
@@ -59,18 +61,22 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, i
         }
     } while(1);
 
-    int glyphSize = glyth_square_size;
-    if(glyth_square_size == 0) {
-        glyphSize = GLYPH_SQR_PXL;
+    int glyphWidth = config->glyphWidth;
+    if(glyphWidth == 0) {
+        glyphWidth = GLYPH_WDT_PXL;
+    }
+    int glyphHeight = config->glythHeight;
+    if(glyphHeight == 0) {
+        glyphHeight = GLYPH_HGT_PXL;
     }
 
     model_arrangement_rect *ret = malloc(sizeof(model_arrangement_rect));
-    ret->height = (float)glyphSize * 2;
-    ret->width = (float)(length * glyphSize);
+    ret->height = (float)glyphHeight * 3;
+    ret->width = (float)(length * glyphWidth);
 
     model_arrangement_rect *labelRect = malloc(sizeof(model_arrangement_rect));
-    labelRect->width = (length * glyphSize) -  glyphSize;
-    labelRect->height = glyphSize;
+    labelRect->width = (length * glyphWidth) -  glyphWidth;
+    labelRect->height = glyphHeight*2;
     ret -> label_rect = labelRect;
     ret -> config = config;
 

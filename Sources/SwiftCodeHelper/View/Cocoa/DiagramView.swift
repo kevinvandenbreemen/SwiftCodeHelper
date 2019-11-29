@@ -40,7 +40,7 @@ class DiagramView: UIView {
         model.classes.forEach{ clz in 
 
             let typeName = UnsafeMutablePointer<CChar>(mutating: clz.name)
-            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, 0, &classConfig) else {
+            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, &classConfig) else {
                 logger.error("Failed to compute rect for type \(typeName)")
                 return
             }
