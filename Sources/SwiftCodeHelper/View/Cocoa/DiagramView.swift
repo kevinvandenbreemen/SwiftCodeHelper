@@ -101,7 +101,7 @@ class DiagramView: UIView {
             
             let label = UILabel.init(frame: classLabelRect)
             label.text = model.classes[clzIndex].name
-            label.font = UIFont.systemFont(ofSize: 20)
+            label.font = FontHelper.font(for: .courier, size: 40)
             addSubview(label)
 
             clzIndex += 1
