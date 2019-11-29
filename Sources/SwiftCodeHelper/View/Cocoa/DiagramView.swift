@@ -35,7 +35,7 @@ class DiagramView: UIView {
         var modelArrangementCurrent = modelArrangementHead
         var previousArrangementNode: UnsafeMutablePointer<model_arrangement_rect_node>? = nil
 
-        let classConfig = ModelRectConfig.init()
+        let classConfig = ModelRectConfig()
         classConfig.glyphHeight = 30
         classConfig.glyphWidth = 60
 
