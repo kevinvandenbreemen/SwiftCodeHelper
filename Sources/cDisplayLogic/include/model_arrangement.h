@@ -48,6 +48,16 @@ model_arrangement_rect_node *model_arrangement_new_rect_node() {
     return ret;
 }
 
+model_rect_config *model_arrangement_model_rect_config_create();
+model_rect_config *model_arrangement_model_rect_config_create() {
+    return malloc(sizeof(model_rect_config));
+}
+
+model_rect_config model_arrangement_model_rect_config_destroy(model_rect_config *mrc);
+model_rect_config model_arrangement_model_rect_config_destroy(model_rect_config *mrc) {
+    free(mrc);
+}
+
 /*
  * Compute appropriate width and height for the given string
  */
