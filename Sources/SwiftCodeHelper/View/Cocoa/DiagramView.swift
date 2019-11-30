@@ -35,12 +35,14 @@ class DiagramView: UIView {
         var modelArrangementCurrent = modelArrangementHead
         var previousArrangementNode: UnsafeMutablePointer<model_arrangement_rect_node>? = nil
 
-        var classConfig = model_rect_config()
+        let classConfig = ModelRectConfig()
+        classConfig.glyphHeight = 30
+        classConfig.glyphWidth = 60
 
         model.classes.forEach{ clz in 
 
             let typeName = UnsafeMutablePointer<CChar>(mutating: clz.name)
-            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, 0, &classConfig) else {
+            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, classConfig.pointer) else {
                 logger.error("Failed to compute rect for type \(typeName)")
                 return
             }
@@ -101,6 +103,7 @@ class DiagramView: UIView {
             
             let label = UILabel.init(frame: classLabelRect)
             label.text = model.classes[clzIndex].name
+            label.font = FontHelper.font(for: .courier, size: 40)
             addSubview(label)
 
             clzIndex += 1

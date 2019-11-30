@@ -8,7 +8,7 @@ TESTING_DIR = $(OUTPUT_DIR)/debug
 C_OUTPUT_DIR = cBuild
 LINKER_FLAGS = -lm -lSDL2
 
-.PHONY: cleanup release buildAndTest cModuleTest cCleanup
+.PHONY: cleanup release buildAndTest cModuleTest cCleanup test
 
 release: cleanup
 	rm -rf ./.build
@@ -22,7 +22,10 @@ cleanup:
 	@echo "Standard cleanup..."
 	-rm Package.resolved
 
-buildAndTest: cleanup
+test: cleanup
+	swift test
+
+buildAndTest: test cleanup
 	swift build
 	swift run SwiftCodeHelperDemo -f ./testResources/swift/
 
