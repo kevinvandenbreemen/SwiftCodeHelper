@@ -8,6 +8,7 @@
 #define GLYPH_WDT_PXL 30
 #define GLYPH_HGT_PXL 40
 #define MIN_DST_BW_RECT 10
+#define PAD_FNT_BAK_LBL 10
 
 /*
  * Configurations for how to go about creating a rectangle for a model
@@ -20,6 +21,8 @@ typedef struct _model_rect_config {
      * Min distance between boxes
      */ 
     int minHorizDistanceBetweenRects;
+
+    int frontBackPaddingForLabel;
 } model_rect_config;
 
 /*
@@ -60,6 +63,7 @@ model_rect_config *model_arrangement_model_rect_config_create() {
     ret->glyphWidth = GLYPH_WDT_PXL;
     ret->glythHeight = GLYPH_HGT_PXL;
     ret->minHorizDistanceBetweenRects = MIN_DST_BW_RECT;
+    ret->frontBackPaddingForLabel = PAD_FNT_BAK_LBL;
 
     return ret;
 }
@@ -93,7 +97,7 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, m
 
     model_arrangement_rect *ret = malloc(sizeof(model_arrangement_rect));
     ret->height = (float)glyphHeight * 3;
-    ret->width = (float)(length * glyphWidth);
+    ret->width = (float)(length * glyphWidth) + config->frontBackPaddingForLabel;
 
     model_arrangement_rect *labelRect = malloc(sizeof(model_arrangement_rect));
     labelRect->width = (length * glyphWidth) -  glyphWidth;

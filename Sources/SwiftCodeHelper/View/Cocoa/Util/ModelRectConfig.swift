@@ -21,12 +21,19 @@ class ModelRectConfig {
             pointer.pointee.minHorizDistanceBetweenRects = minDistanceBetweenBoxesHorizontal
         }
     }
+
+    var paddingHorizontalBetweenLabelAndContainingRect: Int32 {
+        didSet {
+            pointer.pointee.frontBackPaddingForLabel = paddingHorizontalBetweenLabelAndContainingRect
+        }
+    }
     
     init() {
         self.pointer = model_arrangement_model_rect_config_create()!
         self.glyphWidth = 30
         self.glyphHeight = 40
         self.minDistanceBetweenBoxesHorizontal = 10
+        self.paddingHorizontalBetweenLabelAndContainingRect = 10
     }
 
     deinit {
