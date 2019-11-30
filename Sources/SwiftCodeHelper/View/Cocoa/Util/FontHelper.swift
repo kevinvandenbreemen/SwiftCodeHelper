@@ -3,6 +3,7 @@ import Foundation
 
 enum Font: String {
     case courier
+    case consolas
 }
 
 class FontHelper {

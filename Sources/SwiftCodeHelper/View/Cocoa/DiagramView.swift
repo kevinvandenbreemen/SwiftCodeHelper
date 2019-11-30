@@ -36,8 +36,9 @@ class DiagramView: UIView {
         var previousArrangementNode: UnsafeMutablePointer<model_arrangement_rect_node>? = nil
 
         let classConfig = ModelRectConfig()
-        classConfig.glyphHeight = 30
-        classConfig.glyphWidth = 60
+        classConfig.glyphHeight = 60
+        classConfig.glyphWidth = 30
+        classConfig.minDistanceBetweenBoxesHorizontal = 10
 
         model.classes.forEach{ clz in 
 
@@ -103,7 +104,7 @@ class DiagramView: UIView {
             
             let label = UILabel.init(frame: classLabelRect)
             label.text = model.classes[clzIndex].name
-            label.font = FontHelper.font(for: .courier, size: 40)
+            label.font = FontHelper.font(for: .consolas, size: 40)
             addSubview(label)
 
             clzIndex += 1

@@ -7,7 +7,7 @@
 //  Default of a glyth on the screen for computing approximate size of rects for display on the screen
 #define GLYPH_WDT_PXL 30
 #define GLYPH_HGT_PXL 40
-
+#define MIN_DST_BW_RECT 10
 
 /*
  * Configurations for how to go about creating a rectangle for a model
@@ -15,6 +15,11 @@
 typedef struct _model_rect_config {
     int glyphWidth;
     int glythHeight;
+
+    /*
+     * Min distance between boxes
+     */ 
+    int minHorizDistanceBetweenRects;
 } model_rect_config;
 
 /*
@@ -50,7 +55,13 @@ model_arrangement_rect_node *model_arrangement_new_rect_node() {
 
 model_rect_config *model_arrangement_model_rect_config_create();
 model_rect_config *model_arrangement_model_rect_config_create() {
-    return malloc(sizeof(model_rect_config));
+    model_rect_config *ret = malloc(sizeof(model_rect_config));
+    
+    ret->glyphWidth = GLYPH_WDT_PXL;
+    ret->glythHeight = GLYPH_HGT_PXL;
+    ret->minHorizDistanceBetweenRects = MIN_DST_BW_RECT;
+
+    return ret;
 }
 
 model_rect_config model_arrangement_model_rect_config_destroy(model_rect_config *mrc);
@@ -86,7 +97,7 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, m
 
     model_arrangement_rect *labelRect = malloc(sizeof(model_arrangement_rect));
     labelRect->width = (length * glyphWidth) -  glyphWidth;
-    labelRect->height = glyphHeight*2;
+    labelRect->height = glyphHeight;
     ret -> label_rect = labelRect;
     ret -> config = config;
 
@@ -118,10 +129,14 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
             fprintf(stderr, "Node has a NULL rect!\n");
         }
 
-        rect->x = xDist + 10.0;
-        rect->y = yDist + 10.0;
+        if(rect->config == NULL) {
+            fprintf(stderr, "Rect has no config!\n");
+        }
 
-        
+        int minDistanceHorizontal = rect->config->minHorizDistanceBetweenRects;
+
+        rect->x = xDist + (double)minDistanceHorizontal;
+        rect->y = yDist + 10.0;
 
         //  Now compute position of label if present
         if(rect -> label_rect != NULL) {
@@ -140,8 +155,8 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
                 labelRect->width, labelRect->height
             );
 
-            labelRect -> x = (xDist + widthDifference);
-            labelRect -> y = (yDist + heightDifference);
+            labelRect -> x = (rect->x + widthDifference);
+            labelRect -> y = (rect->y + heightDifference);
         }
 
         xDist += (rect->width)+10.0;
