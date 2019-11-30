@@ -37,9 +37,9 @@ class DiagramView: UIView {
 
         let classConfig = ModelRectConfig()
         classConfig.glyphHeight = 60
-        classConfig.glyphWidth = 30
+        classConfig.glyphWidth = 25
         classConfig.minDistanceBetweenBoxesHorizontal = 10
-        classConfig.paddingHorizontalBetweenLabelAndContainingRect = 100
+        classConfig.paddingHorizontalBetweenLabelAndContainingRect = classConfig.glyphWidth * 4
         classConfig.paddingVerticalBetweenLabelAndContainingRect = 50
 
         model.classes.forEach{ clz in 

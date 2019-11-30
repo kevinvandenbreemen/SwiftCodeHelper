@@ -102,7 +102,7 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, m
     ret->width = (float)(length * glyphWidth) + config->frontBackPaddingForLabel;
 
     model_arrangement_rect *labelRect = malloc(sizeof(model_arrangement_rect));
-    labelRect->width = (length * glyphWidth) -  glyphWidth;
+    labelRect->width = (length * glyphWidth);
     labelRect->height = glyphHeight;
     ret -> label_rect = labelRect;
     ret -> config = config;
@@ -149,7 +149,7 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
 
             model_arrangement_rect *labelRect = rect -> label_rect;
             float widthDifference = rect->width - labelRect -> width;
-            widthDifference *= 0.5555;
+            widthDifference *= 0.5;     //  Move the label half the difference so it's centred!
 
             float heightDifference = rect->height - labelRect -> height;
             //  TODO:  Make this configurable (see rect->config later on!)
