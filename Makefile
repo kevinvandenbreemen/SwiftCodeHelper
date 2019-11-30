@@ -20,6 +20,7 @@ release: cleanup
 
 cleanup:
 	@echo "Standard cleanup..."
+	-rm Package.resolved
 
 buildAndTest: cleanup
 	swift build
