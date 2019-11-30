@@ -148,8 +148,7 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
         if(rect -> label_rect != NULL) {
 
             model_arrangement_rect *labelRect = rect -> label_rect;
-            float widthDifference = rect->width - labelRect -> width;
-            widthDifference *= 0.5;     //  Move the label half the difference so it's centred!
+            float widthDifference = rect->config->frontBackPaddingForLabel * 0.5;
 
             float heightDifference = rect->height - labelRect -> height;
             //  TODO:  Make this configurable (see rect->config later on!)
