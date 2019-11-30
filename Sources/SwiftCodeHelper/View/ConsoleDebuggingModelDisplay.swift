@@ -9,7 +9,7 @@ public class ConsoleDebuggingModelDisplay: ModelDisplay {
         model.classes.forEach { clz in
 
         
-            let topAndBottom = String( "+\(String(repeating: "-", count: (clz.name.length + 4)) )+" )
+            let topAndBottom = String( "+\(String(repeating: "-", count: (clz.name.count + 4)) )+" )
             let midLevel = "|  \(clz.name)  |"
 
             output += ("\(topAndBottom)\n\(midLevel)\n\(topAndBottom)\n\n")
