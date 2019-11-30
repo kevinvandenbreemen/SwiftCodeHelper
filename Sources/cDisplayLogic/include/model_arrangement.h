@@ -23,6 +23,8 @@ typedef struct _model_rect_config {
     int minHorizDistanceBetweenRects;
 
     int frontBackPaddingForLabel;
+
+    int topBottomPaddingForLabel;
 } model_rect_config;
 
 /*
@@ -96,7 +98,7 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, m
     }
 
     model_arrangement_rect *ret = malloc(sizeof(model_arrangement_rect));
-    ret->height = (float)glyphHeight * 3;
+    ret->height = (float)glyphHeight + config->topBottomPaddingForLabel;
     ret->width = (float)(length * glyphWidth) + config->frontBackPaddingForLabel;
 
     model_arrangement_rect *labelRect = malloc(sizeof(model_arrangement_rect));
