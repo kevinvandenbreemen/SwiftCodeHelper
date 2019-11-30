@@ -149,9 +149,7 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
 
             model_arrangement_rect *labelRect = rect -> label_rect;
             float widthDifference = rect->width - labelRect -> width;
-
-            //  TODO:  Make this configurable (see rect->config later on!)
-            widthDifference /= 2;
+            widthDifference *= 0.5555;
 
             float heightDifference = rect->height - labelRect -> height;
             //  TODO:  Make this configurable (see rect->config later on!)
