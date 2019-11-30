@@ -149,20 +149,19 @@ void model_arrangement_ArrangeRectangles(model_arrangement_rect_node *listOfNode
 
             model_arrangement_rect *labelRect = rect -> label_rect;
             float widthDifference = rect->config->frontBackPaddingForLabel * 0.5;
+            float heightDifference = rect->config->topBottomPaddingForLabel * 0.5;
 
-            float heightDifference = rect->height - labelRect -> height;
-            //  TODO:  Make this configurable (see rect->config later on!)
-            heightDifference /= 2;
-
+            #ifndef NDEBUG
             printf("wDiff=%f, hDiff=%f (parentW=%f, parentH=%f vs labelW=%f, labelH=%f)\n", widthDifference, heightDifference, rect->width, rect->height, 
                 labelRect->width, labelRect->height
             );
+            #endif
 
             labelRect -> x = (rect->x + widthDifference);
             labelRect -> y = (rect->y + heightDifference);
         }
 
-        xDist += (rect->width)+10.0;
+        xDist += (rect->width)+minDistanceHorizontal;
 
         currentNode = currentNode -> next;
     }
