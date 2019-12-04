@@ -14,7 +14,7 @@ SwiftCodeHelper uses AST as its core parsing technology.  Specifically SwiftAST 
 
 The system being documented is further modeled using a light-weight set of structs.  These can be found in the Representation folder of the sources.  Generally, the class structure looks like this:
 
-![](resource/SwiftCodeHelper.svg)
+![](resource/SwiftCodeHelper-Representations.svg)
 
 The SystemModel is the actual software system itself.  Its component parts are all members of the model.
 
