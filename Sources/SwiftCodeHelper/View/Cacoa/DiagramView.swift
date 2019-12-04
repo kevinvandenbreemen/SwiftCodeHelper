@@ -9,6 +9,17 @@ class DiagramView: UIView {
 
     private let model: SystemModel
 
+    private lazy var classConfig: ModelRectConfig = {
+        let classConfig = ModelRectConfig()
+        classConfig.glyphHeight = 60
+        classConfig.glyphWidth = 25
+        classConfig.minDistanceBetweenBoxesHorizontal = 40
+        classConfig.paddingHorizontalBetweenLabelAndContainingRect = classConfig.glyphWidth * 4
+        classConfig.paddingVerticalBetweenLabelAndContainingRect = 50
+
+        return classConfig
+    }()
+
     override var intrinsicContentSize: CGSize {
         CGSize.init(width: 1000, height: 1000)
     }
@@ -27,21 +38,11 @@ class DiagramView: UIView {
         
     }
 
-    override func draw(_ rect: CGRect) {
-
-        logger.debug("Drawing the model...")
+    private func prepareClasses(model: SystemModel) -> UnsafeMutablePointer<model_arrangement_rect_node> {
 
         let modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
         var modelArrangementCurrent = modelArrangementHead
         var previousArrangementNode: UnsafeMutablePointer<model_arrangement_rect_node>? = nil
-
-        let classConfig = ModelRectConfig()
-        classConfig.glyphHeight = 60
-        classConfig.glyphWidth = 25
-        classConfig.minDistanceBetweenBoxesHorizontal = 40
-        classConfig.paddingHorizontalBetweenLabelAndContainingRect = classConfig.glyphWidth * 4
-        classConfig.paddingVerticalBetweenLabelAndContainingRect = 50
-
         model.classes.forEach{ clz in 
 
             let typeName = UnsafeMutablePointer<CChar>(mutating: clz.name)
@@ -69,6 +70,15 @@ class DiagramView: UIView {
         if let nodeBeforeLast = previousArrangementNode {
             nodeBeforeLast.pointee.next = nil
         }
+
+        return modelArrangementHead
+    }
+
+    override func draw(_ rect: CGRect) {
+
+        logger.debug("Drawing the model...")
+        
+        let modelArrangementHead = prepareClasses(model: self.model)
 
         model_arrangement_ArrangeRectangles(modelArrangementHead)
 
