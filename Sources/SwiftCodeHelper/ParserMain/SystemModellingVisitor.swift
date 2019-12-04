@@ -14,6 +14,13 @@ public class SystemModellingVisitor: ASTVisitor {
         builder.addClass(clz: clz)
         return true
     }
+
+    public func visit(_ protocolDeclaration: ProtocolDeclaration) throws -> Bool {
+        let interfaceName = String(describing: protocolDeclaration.name)
+        let interface = Interface(name: interfaceName)
+        builder.addInterface(interface: interface)
+        return true
+    }
     
 
 }

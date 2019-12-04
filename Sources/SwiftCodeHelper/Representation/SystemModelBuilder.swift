@@ -11,4 +11,8 @@ public class SystemModelBuilder {
         self.systemModel.addClass(clz: clz)
     }
 
+    func addInterface(interface: Interface) {
+        self.systemModel.addInterface(interface: interface)
+    }
+
 }

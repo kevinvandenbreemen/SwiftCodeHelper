@@ -9,4 +9,8 @@ import Foundation
 
 class CocoaModelDisplay: ModelDisplay {
     
+    func display(model: SystemModel) {
+            
+    }
+
 }
