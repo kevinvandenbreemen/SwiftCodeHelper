@@ -20,6 +20,9 @@ class DiagramView: UIView {
         return classConfig
     }()
 
+    /// The raw data for drawing the diagram
+    private var diagramRects: [model_arrangement_rect]?
+
     override var intrinsicContentSize: CGSize {
         CGSize.init(width: 1000, height: 1000)
     }
@@ -74,10 +77,12 @@ class DiagramView: UIView {
         return modelArrangementHead
     }
 
-    override func draw(_ rect: CGRect) {
+    private func getModelArrangementRects() -> [model_arrangement_rect] {
 
-        logger.debug("Drawing the model...")
-        
+        if let existingRects = self.diagramRects {
+            return existingRects
+        }
+
         let modelArrangementHead = prepareClasses(model: self.model)
 
         model_arrangement_ArrangeRectangles(modelArrangementHead)
@@ -100,6 +105,16 @@ class DiagramView: UIView {
         if logger.logLevel == .debug {
             logger.debug("Got \(modelArrangementRects)")
         }
+
+        self.diagramRects = modelArrangementRects
+        return modelArrangementRects
+    }
+
+    override func draw(_ rect: CGRect) {
+
+        logger.debug("Drawing the model...")
+        
+        let modelArrangementRects = getModelArrangementRects()
         
         var clzIndex = 0
         modelArrangementRects.forEach{ rect in 
