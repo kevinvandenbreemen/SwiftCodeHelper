@@ -37,8 +37,6 @@ class DiagramView: UIView {
         self.isUserInteractionEnabled = true
         self.backgroundColor = .clear
         self.frame.size = CGSize.init(width: 1000, height: 1000)
-
-        
     }
 
     private func prepareClasses(model: SystemModel) -> UnsafeMutablePointer<model_arrangement_rect_node> {
@@ -55,7 +53,7 @@ class DiagramView: UIView {
             }
             
             if logger.logLevel == .debug {
-                print("Dim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
+                logger.debug("Dim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
             }
             
             modelArrangementCurrent.pointee.rect = dimensionsRect
