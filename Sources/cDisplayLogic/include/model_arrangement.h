@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 //  Default of a glyth on the screen for computing approximate size of rects for display on the screen
 #define GLYPH_WDT_PXL 30
@@ -37,6 +38,7 @@ typedef struct _rect {
     float height;
     struct _rect *label_rect;   //  Rect for holding the text of a label contained in this rectangle
     model_rect_config *config;  //  Configuration for working with this rect
+    char *label;                //  Label to be displayed inside this rect
 } model_arrangement_rect;
 
 /*
@@ -88,6 +90,10 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, m
         }
     } while(1);
 
+    #ifndef NDEBUG
+    printf("Dims for item named '%s'\n", name);
+    #endif
+
     int glyphWidth = config->glyphWidth;
     if(glyphWidth == 0) {
         glyphWidth = GLYPH_WDT_PXL;
@@ -106,6 +112,11 @@ model_arrangement_rect *model_arrangement_computeRectDimensionsFor(char *name, m
     labelRect->height = glyphHeight;
     ret -> label_rect = labelRect;
     ret -> config = config;
+
+    //  Set up name of this item
+    char *label = malloc(sizeof(char) * length);
+    strcpy(label, name);
+    ret -> label = label;
 
     return ret;
 
