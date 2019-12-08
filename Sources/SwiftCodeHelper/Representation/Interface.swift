@@ -1,6 +1,12 @@
 /// Represents a protocol/interface in the system being parsed
-struct Interface {
+public struct Interface {
 
-    let name: String
+    public let name: String
+
+    
+    public init(name: String) {
+        self.name = name
+    }
+    
 
 }
