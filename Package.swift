@@ -7,7 +7,7 @@ let package = Package(
     name: "SwiftCodeHelper",
     dependencies: [
         .package(url: "https://github.com/yanagiba/swift-ast.git", from: "0.4.2"),
-        .package(url: "https://github.com/kevinvandenbreemen/swift-commandlinekit.git", .branch("forPullRequests")),
+        .package(url: "https://github.com/objecthub/swift-commandlinekit.git", .branch("master")),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.2.0"),
         .package(url: "https://github.com/kevinvandenbreemen/Cacao.git", .branch("develop")),
     ],
