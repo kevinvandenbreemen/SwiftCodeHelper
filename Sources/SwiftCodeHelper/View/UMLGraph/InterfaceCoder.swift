@@ -9,7 +9,7 @@ public class InterfaceCoder {
     public func generateCode() -> String {
         return
 """
-interface I_Test {
+interface \(interface.name) {
 
 }
 """
