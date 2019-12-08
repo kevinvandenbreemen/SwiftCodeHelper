@@ -39,6 +39,41 @@ class DiagramView: UIView {
         self.frame.size = CGSize.init(width: 1000, height: 1000)
     }
 
+    private func prepareInterfaces(model: SystemModel) -> UnsafeMutablePointer<model_arrangement_rect_node> {
+        let modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
+        var modelArrangementCurrent = modelArrangementHead
+        var previousArrangementNode: UnsafeMutablePointer<model_arrangement_rect_node>? = nil
+        model.interfaces.forEach{ interface in 
+
+            let typeName = UnsafeMutablePointer<CChar>(mutating: interface.name)
+            guard let dimensionsRect = model_arrangement_computeRectDimensionsFor(typeName, classConfig.pointer) else {
+                logger.error("Failed to compute rect for type \(typeName)")
+                return
+            }
+            
+            if logger.logLevel == .debug {
+                logger.debug("(interface)\tDim Rect [\(interface.name)]=\(dimensionsRect.pointee)")
+            }
+            
+            modelArrangementCurrent.pointee.rect = dimensionsRect
+
+            guard let next = model_arrangement_new_rect_node() else {
+                logger.error("Failed to create storage node")
+                return
+            }
+            modelArrangementCurrent.pointee.next = next
+            previousArrangementNode = modelArrangementCurrent
+            modelArrangementCurrent = next
+
+        }
+
+        if let nodeBeforeLast = previousArrangementNode {
+            nodeBeforeLast.pointee.next = nil
+        }
+
+        return modelArrangementHead
+    }
+
     private func prepareClasses(model: SystemModel) -> UnsafeMutablePointer<model_arrangement_rect_node> {
 
         let modelArrangementHead: UnsafeMutablePointer<model_arrangement_rect_node> = model_arrangement_new_rect_node()
@@ -53,7 +88,7 @@ class DiagramView: UIView {
             }
             
             if logger.logLevel == .debug {
-                logger.debug("Dim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
+                logger.debug("(class)\tDim Rect [\(clz.name)]=\(dimensionsRect.pointee)")
             }
             
             modelArrangementCurrent.pointee.rect = dimensionsRect
@@ -82,12 +117,29 @@ class DiagramView: UIView {
         }
 
         let modelArrangementHead = prepareClasses(model: self.model)
+        let interfacesHead = prepareInterfaces(model: model)
 
         model_arrangement_ArrangeRectangles(modelArrangementHead)
 
         //  Convert the queue to an array
         var currentModelArrangementNode : model_arrangement_rect_node? = modelArrangementHead.pointee
         var modelArrangementRects: [model_arrangement_rect] = []
+
+        //  Grab the classes
+        repeat {
+            if let currentNode = currentModelArrangementNode {
+                modelArrangementRects.append(currentNode.rect.pointee)
+
+                if let nextPointer = currentNode.next {
+                    currentModelArrangementNode = nextPointer.pointee
+                } else {
+                    currentModelArrangementNode = nil
+                }
+            }
+        } while currentModelArrangementNode != nil
+
+        //  Grab the interfaces
+        currentModelArrangementNode = interfacesHead.pointee
         repeat {
             if let currentNode = currentModelArrangementNode {
                 modelArrangementRects.append(currentNode.rect.pointee)
@@ -101,7 +153,8 @@ class DiagramView: UIView {
         } while currentModelArrangementNode != nil
 
         if logger.logLevel == .debug {
-            logger.debug("Got \(modelArrangementRects)")
+            logger.debug("Got \(modelArrangementRects.count) rects for display")
+            logger.debug("Raw model rects:  \(modelArrangementRects)")
         }
 
         self.diagramRects = modelArrangementRects
@@ -114,9 +167,12 @@ class DiagramView: UIView {
         
         let modelArrangementRects = getModelArrangementRects()
         
-        var clzIndex = 0
+        var boxIndex = 0
         modelArrangementRects.forEach{ rect in 
-            logger.debug("Trying to create labelled box")
+
+            let name = String.init(cString: rect.label)
+
+            logger.debug("Trying to create labelled box name \(name)")
             let lbr:model_arrangement_rect = rect.label_rect.pointee
 
             let classRect = CGRect.init(x: CGFloat(rect.x), y: CGFloat(rect.y), width: CGFloat(rect.width), height: CGFloat(rect.height))
@@ -126,11 +182,11 @@ class DiagramView: UIView {
             classBox.stroke()
             
             let label = UILabel.init(frame: classLabelRect)
-            label.text = model.classes[clzIndex].name
+            label.text = name
             label.font = FontHelper.font(for: .consolas, size: 40)
             addSubview(label)
 
-            clzIndex += 1
+            boxIndex += 1
 
         }
 

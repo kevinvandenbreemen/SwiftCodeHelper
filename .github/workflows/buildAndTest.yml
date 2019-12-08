@@ -1,4 +1,4 @@
-name: Swift
+name: Validate compilation on Ubuntu 18.04
 
 on: [push]
 
@@ -20,5 +20,3 @@ jobs:
         apt-get: libsdl2-dev
     - name: Build
       run: swift build -v
-    - name: Run tests
-      run: swift test -v
