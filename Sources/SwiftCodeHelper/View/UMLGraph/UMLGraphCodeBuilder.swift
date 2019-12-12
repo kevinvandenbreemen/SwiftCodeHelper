@@ -15,6 +15,11 @@ public class UMLGraphCodeBuilder: ModelDisplay {
             generatedCode += "\n\(generator.generateCode())"
         }
 
+        model.interfaces.forEach{ iFce in 
+            let generator = InterfaceCoder(for: iFce)
+            generatedCode += "\n\(generator.generateCode())"
+        }
+
         print(generatedCode)
         
     }
