@@ -1,5 +1,13 @@
+import SimpleCodeToGraphPumper
+
 /// Generates UMLGraph code and then (if possible) runs tooling to create the UML graph proper
 public class UMLGraphCodeBuilder: ModelDisplay {
+
+    private lazy var pumper: PumperMain = {
+        let ret = PumperMain()
+        ret.executeSetup()
+        return ret
+    }()
 
     public init(){}
 
@@ -20,7 +28,7 @@ public class UMLGraphCodeBuilder: ModelDisplay {
             generatedCode += "\n\(generator.generateCode())"
         }
 
-        print(generatedCode)
+        pumper.pumpOut(with: generatedCode)
         
     }
 }

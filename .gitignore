@@ -7,3 +7,9 @@ xcuserdata/
 /.vscode
 Package.resolved
 /cBuild
+
+# SCTGP stuff
+/output
+/scripts
+/run.sh
+/cp

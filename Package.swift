@@ -10,6 +10,7 @@ let package = Package(
         .package(url: "https://github.com/objecthub/swift-commandlinekit.git", .branch("master")),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.2.0"),
         .package(url: "https://github.com/kevinvandenbreemen/Cacao.git", .branch("develop")),
+        .package(url: "/media/truecrypt1/development/swift/SimpleCodeToGraphPumper", .branch("master")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -17,7 +18,7 @@ let package = Package(
         .target(name: "DisplayLogic", path: "./Sources/cDisplayLogic"),
         .target(
             name: "SwiftCodeHelper",
-            dependencies: ["SwiftAST+Tooling", "CommandLineKit", "Logging", "Cacao", "DisplayLogic"]),
+            dependencies: ["SwiftAST+Tooling", "CommandLineKit", "Logging", "Cacao", "DisplayLogic", "SimpleCodeToGraphPumper"]),
         .target(name: "SwiftCodeHelperDemo",
             dependencies: ["SwiftCodeHelper"]
         ),
