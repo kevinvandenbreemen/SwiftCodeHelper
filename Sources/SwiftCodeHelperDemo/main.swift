@@ -23,5 +23,5 @@ do {
     print(error)
 }
 
-let display = CacaoDisplay()
+let display = UMLGraphCodeBuilder()
 display.display(model:  modelBuilder.systemModel)
