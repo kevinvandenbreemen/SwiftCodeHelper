@@ -2,9 +2,12 @@ public class SystemModelBuilder {
 
     public let systemModel: SystemModel
 
+    /// Name of a class to list of its implemented interfaces
+    private var classNameToImplementedInterfaceNames: [String: [String]]
     
     public init(systemModel model: SystemModel = SystemModel()) {
         self.systemModel = model
+        self.classNameToImplementedInterfaceNames = [:]
     }
     
     func addClass(clz: Class) {
@@ -13,6 +16,21 @@ public class SystemModelBuilder {
 
     func addInterface(interface: Interface) {
         self.systemModel.addInterface(interface: interface)
+
+        for (className, interfaces) in classNameToImplementedInterfaceNames {
+            if let _ = interfaces.first(where: {ifc in 
+                ifc == interface.name
+            }), var alreadyExistingClass = systemModel.classes.first(where: {clz in 
+                clz.name == className
+            }) {
+                alreadyExistingClass.implements(interface: interface)
+                systemModel.classes.removeAll(where: {clz in 
+                    clz.name == alreadyExistingClass.name
+                })
+                systemModel.addClass(clz: alreadyExistingClass)
+            }
+        }
+
     }
 
     /// Alert this builder that the class with the given name implements the given interface
@@ -41,6 +59,14 @@ public class SystemModelBuilder {
                 })
                 systemModel.addClass(clz: existingClass)
 
+            }
+
+            //  2:  Interface not yet registered
+            else {
+                if classNameToImplementedInterfaceNames[existingClass.name] == nil {
+                    classNameToImplementedInterfaceNames[existingClass.name] = []
+                }
+                classNameToImplementedInterfaceNames[existingClass.name]!.append(interfaceName)
             }
 
         }
