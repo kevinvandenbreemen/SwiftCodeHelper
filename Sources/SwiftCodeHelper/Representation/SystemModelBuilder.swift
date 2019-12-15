@@ -24,10 +24,7 @@ public class SystemModelBuilder {
                 clz.name == className
             }) {
                 alreadyExistingClass.implements(interface: interface)
-                systemModel.classes.removeAll(where: {clz in 
-                    clz.name == alreadyExistingClass.name
-                })
-                systemModel.addClass(clz: alreadyExistingClass)
+                updateSystemModelClass(with: alreadyExistingClass)
             }
         }
 
@@ -54,10 +51,7 @@ public class SystemModelBuilder {
             if let existingInterface = existingInterfaceOpt {
                 
                 existingClass.implements(interface: existingInterface)
-                systemModel.classes.removeAll(where: {clz in 
-                    clz.name == existingClass.name
-                })
-                systemModel.addClass(clz: existingClass)
+                updateSystemModelClass(with: existingClass)
 
             }
 
@@ -71,6 +65,13 @@ public class SystemModelBuilder {
 
         }
 
+    }
+
+    private func updateSystemModelClass(with updatedClass: Class) {
+        systemModel.classes.removeAll(where: {clz in 
+            clz.name == updatedClass.name
+        })
+        systemModel.addClass(clz: updatedClass)
     }
 
 }
