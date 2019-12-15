@@ -11,7 +11,19 @@ public class SystemModelBuilder {
     }
     
     func addClass(clz: Class) {
-        self.systemModel.addClass(clz: clz)
+        
+        var classToAdd = clz
+        if let interfacesImplementedByClassName = classNameToImplementedInterfaceNames[clz.name] {
+            for interfaceName in interfacesImplementedByClassName {
+                if let existingInterface = systemModel.interfaces.first(where: {interface in 
+                    interface.name == interfaceName
+                }) {
+                    classToAdd.implements(interface: existingInterface)
+                }
+            }
+        }
+
+        self.systemModel.addClass(clz: classToAdd)
     }
 
     func addInterface(interface: Interface) {
@@ -43,7 +55,7 @@ public class SystemModelBuilder {
         })
 
         //  Two scenarios:
-        //  1:  The class and the interface are already registered
+        //  1:  The class is already registered
         if var existingClass = existingClassOpt {
 
             //  Two sub-scenarios: 
@@ -63,6 +75,17 @@ public class SystemModelBuilder {
                 classNameToImplementedInterfaceNames[existingClass.name]!.append(interfaceName)
             }
 
+        }
+
+        //  2:  The class is not yet registered
+        else {
+
+            //  Two sub-scenarios:
+            //  1:  The interface is not yet registered
+            if classNameToImplementedInterfaceNames[className] == nil {
+                classNameToImplementedInterfaceNames[className] = []
+            }
+            classNameToImplementedInterfaceNames[className]!.append(interfaceName)
         }
 
     }
