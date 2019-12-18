@@ -1,6 +1,7 @@
 import Cacao
 import Foundation
 import Logging
+import SwiftSoftwareSystemModel
 
 /// Displays a vector drawing
 class DrawingViewController: UIViewController, UIScrollViewDelegate {

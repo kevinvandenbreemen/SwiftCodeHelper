@@ -20,7 +20,7 @@ release: cleanup
 
 cleanup:
 	@echo "Standard cleanup..."
-	-rm Package.resolved
+	swift package update
 
 test: cleanup
 	swift test

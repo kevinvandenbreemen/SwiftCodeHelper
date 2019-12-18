@@ -1,4 +1,5 @@
 import SimpleCodeToGraphPumper
+import SwiftSoftwareSystemModel
 
 /// Generates UMLGraph code and then (if possible) runs tooling to create the UML graph proper
 public class UMLGraphCodeBuilder: ModelDisplay {

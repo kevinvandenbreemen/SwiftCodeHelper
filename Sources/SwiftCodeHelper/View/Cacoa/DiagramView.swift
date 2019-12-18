@@ -2,6 +2,7 @@ import Cacao
 import Foundation
 import DisplayLogic
 import Logging
+import SwiftSoftwareSystemModel
 
 class DiagramView: UIView {
 

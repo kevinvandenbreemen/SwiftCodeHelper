@@ -1,3 +1,4 @@
+@testable import SwiftSoftwareSystemModel
 @testable import SwiftCodeHelper
 import XCTest
 

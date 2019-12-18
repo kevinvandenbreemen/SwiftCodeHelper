@@ -1,5 +1,6 @@
 import AST
 import Logging
+import SwiftSoftwareSystemModel
 
 public class SystemModellingVisitor: ASTVisitor {
 

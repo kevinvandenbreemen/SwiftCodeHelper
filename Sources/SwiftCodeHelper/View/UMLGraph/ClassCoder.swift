@@ -1,3 +1,5 @@
+import SwiftSoftwareSystemModel
+
 public class ClassCoder {
 
     let clz: Class

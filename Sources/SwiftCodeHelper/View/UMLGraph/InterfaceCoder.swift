@@ -1,3 +1,5 @@
+import SwiftSoftwareSystemModel
+
 public class InterfaceCoder {
 
     private let interface: Interface

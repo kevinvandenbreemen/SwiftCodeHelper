@@ -1,3 +1,4 @@
+import SwiftSoftwareSystemModel
 import SwiftCodeHelper
 import XCTest
 

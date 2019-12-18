@@ -1,3 +1,5 @@
+import SwiftSoftwareSystemModel
+
 public class ConsoleDebuggingModelDisplay: ModelDisplay {
 
     public init(){}
