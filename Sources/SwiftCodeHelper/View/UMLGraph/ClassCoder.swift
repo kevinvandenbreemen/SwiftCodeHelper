@@ -10,20 +10,32 @@ public class ClassCoder {
     
     public func generateCode() -> String {
 
-        var implementation: String? = nil
+        var implementation: String = 
+        """
+        /**
+         * @opt inferreltype composed
+        """
         if !clz.interfaces.isEmpty {
-            implementation = "/**"
+            
             clz.interfaces.forEach{ ifc in 
-                implementation! += "\n * @extends \(ifc.name)"
+                implementation += "\n * @extends \(ifc.name)"
             }
-            implementation! += "\n */"
+            
+        }
+        implementation += "\n */"
+
+        var properties = ""
+        if !clz.properties.isEmpty {
+            clz.properties.forEach({property in 
+                properties += "\(property.type.name) \(property.name);"
+            })
         }
 
         return 
 """
-\(implementation ?? "")
+\(implementation)
 class \(clz.name) {
-
+    \(properties)
 }
 """
     }
