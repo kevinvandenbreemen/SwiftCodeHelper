@@ -4,4 +4,9 @@ class DriverImpl: Driver {
 
     private let cosmicCalculator: CosmicCalculator = CosmicCalculator()
 
+    func test() {
+        var i = 4
+        print(i)
+    }
+
 }

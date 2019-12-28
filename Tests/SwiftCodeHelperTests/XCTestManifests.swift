@@ -6,6 +6,7 @@ public func allTests() -> [XCTestCaseEntry] {
         testCase(FontTests.allTests),
         testCase(UMLGraphCodeBuilderTests.allTests),
         testCase(UMLInterfaceRepresentationTests.allTests),
+        testCase(ModelBuilderVisitorTests.allTests),
     ]
 }
 #endif
