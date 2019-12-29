@@ -2,7 +2,15 @@ import AST
 import Logging
 import SwiftSoftwareSystemModel
 
+class VisitorContext {
+
+    var currentType: String? = nil
+
+}
+
 public class SystemModellingVisitor: ASTVisitor {
+
+    private let context: VisitorContext
 
     private var logger: Logger
 
@@ -10,6 +18,7 @@ public class SystemModellingVisitor: ASTVisitor {
     
     public init(builder: SystemModelBuilder = SystemModelBuilder() ) {
         self.builder = builder
+        self.context = VisitorContext()
         
         self.logger = Logger.init(label: String(describing: SystemModellingVisitor.self))
         self.logger.logLevel = .debug
@@ -20,6 +29,7 @@ public class SystemModellingVisitor: ASTVisitor {
         logger.debug("Class declaration:\n******************\n\(classDeclaration)")
 
         let className = String(describing: classDeclaration.name)
+        context.currentType = className
         let clz = Class(name: className)
         builder.addClass(clz: clz)
 
@@ -65,13 +75,10 @@ public class SystemModellingVisitor: ASTVisitor {
             print("Initializer list with \(patternInitializer)")
             print("Pattern = \(patternInitializer[0].pattern) - a \(type(of: patternInitializer[0].pattern))")
             print("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
-            if let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
-                //print("identifierPat's identifier = \(identifierPat.identifier), a \(type(of: identifierPat.identifier))")
-                //builder.addProperty(ofType: String, to: String, named: String)
+            if let targetClass = context.currentType, let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
 
                 let propertyName = identifierPat.identifier.description
                 let propertyType = typeAnnotation.type.description
-                let targetClass = "ClassWithOneField"
                 logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
 
                 builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName)
