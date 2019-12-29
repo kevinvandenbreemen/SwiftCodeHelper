@@ -56,25 +56,18 @@ public class SystemModellingVisitor: ASTVisitor {
     
     public func visit(_ declaration: VariableDeclaration) throws -> Bool {
 
-        print("FIELD Declaration:  \(declaration.textDescription)")
-        print("FIELD Declaration:  \(declaration.description)")
-        print("FIELD Declaration:  \(declaration.modifiers)")
-        print("FIELD DecBody:  \(type(of: declaration.body)) -- \(declaration.body.textDescription)")
-
-        var sourceFileLocation = declaration.sourceLocation.identifier
-
         let body: VariableDeclaration.Body = declaration.body
         switch body {
         case .codeBlock(let identifier, let typeAnnotation, let codeBlock):
-            print("Code block - ident=\(identifier), typeAnno=\(typeAnnotation)")
+            logger.debug("Code block - ident=\(identifier), typeAnno=\(typeAnnotation)")
         case .getterSetterBlock(let identifier, let typeAnnotation, let codeBlock):
-            print("getter setter block - ident=\(identifier), typeAnno=\(typeAnnotation)")
+            logger.debug("getter setter block - ident=\(identifier), typeAnno=\(typeAnnotation)")
         case .getterSetterKeywordBlock(let identifier, let typeAnnotation, let getterSetterKeywordBlock):
-            print("Code block - ident=\(identifier), typeAnno=\(typeAnnotation)")
+            logger.debug("Code block - ident=\(identifier), typeAnno=\(typeAnnotation)")
         case .initializerList(let patternInitializer):
-            print("Initializer list with \(patternInitializer)")
-            print("Pattern = \(patternInitializer[0].pattern) - a \(type(of: patternInitializer[0].pattern))")
-            print("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
+            logger.debug("Initializer list with \(patternInitializer)")
+            logger.debug("Pattern = \(patternInitializer[0].pattern) - a \(type(of: patternInitializer[0].pattern))")
+            logger.debug("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
             if let targetClass = context.currentType, let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
 
                 let propertyName = identifierPat.identifier.description
@@ -85,7 +78,7 @@ public class SystemModellingVisitor: ASTVisitor {
 
             }
         case .willSetDidSetBlock(let identifier, let annotation, let expression, let willSetDidSetBlock):
-            print("Will set did set block - identifier=\(identifier)")
+            logger.debug("Will set did set block - identifier=\(identifier)")
         }
 
         return true
