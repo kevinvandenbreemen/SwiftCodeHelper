@@ -44,5 +44,45 @@ public class SystemModellingVisitor: ASTVisitor {
         return true
     }
     
+    public func visit(_ declaration: VariableDeclaration) throws -> Bool {
+
+        print("FIELD Declaration:  \(declaration.textDescription)")
+        print("FIELD Declaration:  \(declaration.description)")
+        print("FIELD Declaration:  \(declaration.modifiers)")
+        print("FIELD DecBody:  \(type(of: declaration.body)) -- \(declaration.body.textDescription)")
+
+        var sourceFileLocation = declaration.sourceLocation.identifier
+
+        let body: VariableDeclaration.Body = declaration.body
+        switch body {
+        case .codeBlock(let identifier, let typeAnnotation, let codeBlock):
+            print("Code block - ident=\(identifier), typeAnno=\(typeAnnotation)")
+        case .getterSetterBlock(let identifier, let typeAnnotation, let codeBlock):
+            print("getter setter block - ident=\(identifier), typeAnno=\(typeAnnotation)")
+        case .getterSetterKeywordBlock(let identifier, let typeAnnotation, let getterSetterKeywordBlock):
+            print("Code block - ident=\(identifier), typeAnno=\(typeAnnotation)")
+        case .initializerList(let patternInitializer):
+            print("Initializer list with \(patternInitializer)")
+            print("Pattern = \(patternInitializer[0].pattern) - a \(type(of: patternInitializer[0].pattern))")
+            print("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
+            if let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
+                //print("identifierPat's identifier = \(identifierPat.identifier), a \(type(of: identifierPat.identifier))")
+                //builder.addProperty(ofType: String, to: String, named: String)
+
+                let propertyName = identifierPat.identifier.description
+                let propertyType = typeAnnotation.type.description
+                let targetClass = "ClassWithOneField"
+                logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
+
+                builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName)
+
+            }
+        case .willSetDidSetBlock(let identifier, let annotation, let expression, let willSetDidSetBlock):
+            print("Will set did set block - identifier=\(identifier)")
+        }
+
+        return true
+
+    }
 
 }
