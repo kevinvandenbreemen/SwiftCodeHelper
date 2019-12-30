@@ -53,6 +53,20 @@ public class SystemModellingVisitor: ASTVisitor {
         builder.addInterface(interface: interface)
         return true
     }
+
+    public func visit(_ extensionDeclaration: ExtensionDeclaration) throws -> Bool {
+
+        if let inheritanceClause = extensionDeclaration.typeInheritanceClause {
+            let className = extensionDeclaration.type.description
+            logger.debug("Extension of \(extensionDeclaration.type): \(inheritanceClause.typeInheritanceList)")
+            inheritanceClause.typeInheritanceList.forEach({ identifier in 
+                builder.addImplements(type: className, implements: identifier.description)
+            })
+        }
+
+        
+        return true
+    }
     
     public func visit(_ declaration: VariableDeclaration) throws -> Bool {
 
