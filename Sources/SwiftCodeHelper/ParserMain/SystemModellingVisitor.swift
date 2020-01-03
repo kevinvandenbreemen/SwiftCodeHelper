@@ -102,9 +102,16 @@ public class SystemModellingVisitor: ASTVisitor {
             logger.debug("Pattern = \(patternInitializer[0].pattern) - a \(type(of: patternInitializer[0].pattern))")
             logger.debug("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
             if let targetClass = context.currentType, let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
+             
+                var optionalWrappedType: String? = nil
+                if let optionalType = typeAnnotation.type as? OptionalType {
+                    logger.debug("Optional - wrapped is :  \(optionalType.wrappedType)")
+                    optionalWrappedType = optionalType.wrappedType.description
+                }
 
                 let propertyName = identifierPat.identifier.description
-                let propertyType = typeAnnotation.type.description
+                let propertyType = optionalWrappedType == nil ? typeAnnotation.type.description : optionalWrappedType!
+
                 logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
 
                 builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName)
