@@ -186,6 +186,31 @@ class ModelBuilderVisitorTests: XCTestCase {
         XCTAssertTrue(details.optional)
     }
 
+    func testDetectsOptionalLetProperties() {
+        let builder = SystemModelBuilder()
+        let visitor = SystemModellingVisitor(builder: builder)
+        let parser = SourceFileParser(filePath: "./testResources/swift/ClassWithOptionalConstant.swift", visitor: visitor)
+
+        parser.parse()
+
+        guard let clz = builder.systemModel.classes.first(where: { clz in 
+            return clz.name == "ClassWithOptionalConstant"
+        }) else {
+            XCTFail("Could not get class")
+            return
+        }
+
+        XCTAssertEqual(1, clz.propertiesForDisplay.count, "Should be 1 property")
+        let letProp = clz.propertiesForDisplay.first(where: {$0.name == "optionalConstant"})!
+        XCTAssertEqual("String", letProp.type)
+
+        XCTAssertNotNil(letProp.additionalDetails)
+        let details = letProp.additionalDetails!
+
+        XCTAssertTrue(details.optional)
+
+    }
+
     static var allTests = [
         ("Can load a class from a swift file", testCanLoadAClassFromASwiftFile),
         ("Can load a field on a class", testCanLoadFieldOfAClass),
@@ -195,6 +220,7 @@ class ModelBuilderVisitorTests: XCTestCase {
         ("Can detect let constants declared as class properties", testDetectsLetProperties),
         ("Property identifies optional fields' types", testPropertyAcquiresOptionalFields),
         ("Properly flags optional fields", testPropertyPopulatesOptionalFlagOnOptionalFields),
+        ("Property detects and flags optional constants", testDetectsOptionalLetProperties),
     ]
 
 }

@@ -75,12 +75,20 @@ public class SystemModellingVisitor: ASTVisitor {
             initializer.pattern is IdentifierPattern
         }), let typeAnnotation = (patternInitializer.pattern as! IdentifierPattern).typeAnnotation {
 
+            var optionalWrappedType: String? = nil
+            if let optionalType = typeAnnotation.type as? OptionalType {
+                logger.debug("Optional - wrapped is :  \(optionalType.wrappedType)")
+                optionalWrappedType = optionalType.wrappedType.description
+            }
+
             let propertyName = (patternInitializer.pattern as! IdentifierPattern).identifier.description
-            let propertyType = typeAnnotation.type.description
+            let propertyType = optionalWrappedType == nil ? typeAnnotation.type.description : optionalWrappedType!
 
             logger.debug("[\(currentType)] add const '\(propertyName)' of type '\(propertyType)'")
 
-            builder.addProperty(ofType: propertyType, to: currentType, named: propertyName)
+            builder.addProperty(ofType: propertyType, to: currentType, named: propertyName, additionalDetails: PropertyDetails(
+                    optional: optionalWrappedType != nil
+                ))
 
         }
 
