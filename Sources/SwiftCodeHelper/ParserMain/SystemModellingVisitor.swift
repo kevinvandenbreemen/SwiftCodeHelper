@@ -114,7 +114,9 @@ public class SystemModellingVisitor: ASTVisitor {
 
                 logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
 
-                builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName)
+                builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
+                    optional: optionalWrappedType != nil
+                ))
 
             }
         case .willSetDidSetBlock(let identifier, let annotation, let expression, let willSetDidSetBlock):

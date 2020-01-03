@@ -163,6 +163,29 @@ class ModelBuilderVisitorTests: XCTestCase {
         XCTAssertEqual("String", property.type)
     }
 
+    func testPropertyPopulatesOptionalFlagOnOptionalFields() {
+        let builder = SystemModelBuilder()
+        let visitor = SystemModellingVisitor(builder: builder)
+        let parser = SourceFileParser(filePath: "./testResources/swift/ClassWithOptionalField.swift", visitor: visitor)
+
+        parser.parse()
+
+        guard let clz = builder.systemModel.classes.first(where: { clz in 
+            return clz.name == "ClassWithOptionalField"
+        }) else {
+            XCTFail("Could not get class")
+            return
+        }
+
+        XCTAssertEqual(1, clz.propertiesForDisplay.count)
+        let property = clz.propertiesForDisplay[0]
+
+        XCTAssertNotNil(property.additionalDetails)
+        let details = property.additionalDetails!
+
+        XCTAssertTrue(details.optional)
+    }
+
     static var allTests = [
         ("Can load a class from a swift file", testCanLoadAClassFromASwiftFile),
         ("Can load a field on a class", testCanLoadFieldOfAClass),
@@ -171,6 +194,7 @@ class ModelBuilderVisitorTests: XCTestCase {
         ("Can properly differentiate between extensions", testRecognizesDifferentExtensionsForDifferentTypes),
         ("Can detect let constants declared as class properties", testDetectsLetProperties),
         ("Property identifies optional fields' types", testPropertyAcquiresOptionalFields),
+        ("Properly flags optional fields", testPropertyPopulatesOptionalFlagOnOptionalFields),
     ]
 
 }
