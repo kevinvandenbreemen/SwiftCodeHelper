@@ -137,6 +137,8 @@ class ModelBuilderVisitorTests: XCTestCase {
         }
 
         XCTAssertEqual(2, clz.propertiesForDisplay.count, "Should be 2 properties")
+        let letProp = clz.propertiesForDisplay.first(where: {$0.name == "constantText"})!
+        XCTAssertEqual("String", letProp.type)
 
     }
 
