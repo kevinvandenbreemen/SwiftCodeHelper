@@ -21,6 +21,9 @@ public class UMLGraphCodeBuilder: ModelDisplay {
 /**
  * @opt inferrel
  * @opt inferdep
+ * @opt attributes
+ * @opt types
+ * @opt hide java.*
  * @hidden
  */
 class UMLOptions {}

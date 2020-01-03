@@ -1,14 +1,19 @@
 import SwiftSoftwareSystemModel
+import Logging
 
 public class ClassCoder {
 
     let clz: Class
+    private var logger: Logger 
     
     public init(for clz: Class) {
         self.clz = clz
+        self.logger = Logger.init(label: "ClassCoder")
     }
     
     public func generateCode() -> String {
+
+        logger.debug("Class:  [\(clz.name)]\n======================================")
 
         var implementation: String = 
         """
@@ -27,9 +32,19 @@ public class ClassCoder {
         var properties = ""
         if !clz.properties.isEmpty {
             clz.properties.forEach({property in 
-                properties += "\(property.type.name) \(property.name);"
+                properties += "\(property.type.name) \(property.name);\n"
             })
         }
+
+        let propertiesForDisplay = clz.propertiesForDisplay.filter({prop in 
+            return clz.properties.first(where: {p in 
+                return p.name == prop.name
+            }) == nil
+        })
+        logger.debug("Including properties for display as follows:\n\(propertiesForDisplay)")
+        propertiesForDisplay.forEach({forDisplay in 
+            properties += "\(forDisplay.type) \(forDisplay.name);\n"
+        })
 
         return 
 """
