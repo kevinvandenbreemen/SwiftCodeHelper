@@ -1,6 +1,6 @@
 class CosmicCalculator {
 
     var displayText: String
-    var constantText: String
+    let constantText: String
 
 }

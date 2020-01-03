@@ -4,6 +4,7 @@ import SwiftSoftwareSystemModel
 
 class VisitorContext {
 
+    var inMethodDeclarations: Bool = false
     var currentType: String? = nil
 
 }
@@ -21,7 +22,7 @@ public class SystemModellingVisitor: ASTVisitor {
         self.context = VisitorContext()
         
         self.logger = Logger.init(label: String(describing: SystemModellingVisitor.self))
-        self.logger.logLevel = .debug
+        logger.logLevel = .debug
     }
     
     public func visit(_ classDeclaration: ClassDeclaration)  throws -> Bool {
@@ -68,6 +69,24 @@ public class SystemModellingVisitor: ASTVisitor {
         return true
     }
     
+    public func visit(_ constant: ConstantDeclaration) throws -> Bool {
+
+        if let currentType = context.currentType, !context.inMethodDeclarations, let patternInitializer = constant.initializerList.first(where: {initializer in 
+            initializer.pattern is IdentifierPattern
+        }), let typeAnnotation = (patternInitializer.pattern as! IdentifierPattern).typeAnnotation {
+
+            let propertyName = (patternInitializer.pattern as! IdentifierPattern).identifier.description
+            let propertyType = typeAnnotation.type.description
+
+            logger.debug("[\(currentType)] add const '\(propertyName)' of type '\(propertyType)'")
+
+            builder.addProperty(ofType: propertyType, to: currentType, named: propertyName)
+
+        }
+
+        return true
+    }
+
     public func visit(_ declaration: VariableDeclaration) throws -> Bool {
 
         let body: VariableDeclaration.Body = declaration.body
