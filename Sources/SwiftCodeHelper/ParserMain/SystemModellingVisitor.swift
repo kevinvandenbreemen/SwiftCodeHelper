@@ -75,6 +75,8 @@ public class SystemModellingVisitor: ASTVisitor {
             initializer.pattern is IdentifierPattern
         }), let typeAnnotation = (patternInitializer.pattern as! IdentifierPattern).typeAnnotation {
 
+            logger.debug("let property type=\(typeAnnotation.type), name=\((patternInitializer.pattern as! IdentifierPattern).identifier.description)")
+
             var optionalWrappedType: String? = nil
             if let optionalType = typeAnnotation.type as? OptionalType {
                 logger.debug("Optional - wrapped is :  \(optionalType.wrappedType)")
@@ -96,6 +98,65 @@ public class SystemModellingVisitor: ASTVisitor {
         return true
     }
 
+    private func handleProtocolCompositionVariableDeclaration(identifierPat: IdentifierPattern, protocolComposition: ProtocolCompositionType, optional: Bool = false) {
+
+        guard let targetClass = context.currentType else {
+            logger.error("Attempt to add protocol composition field declaration when no current class")
+            return
+        }
+
+        let propertyName = identifierPat.identifier.description
+        let propertyType = "ProtocolComposition"
+
+
+        builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
+                    optional: false,
+                    tuple: false
+                ))
+
+    }
+
+    private func handleOptionalPropertyDeclaration(identifierPat: IdentifierPattern, optionalType: OptionalType) {
+        logger.debug("Optional - wrapped type is :  \(type(of: optionalType.wrappedType))")
+        
+
+        if let tupleType = optionalType.wrappedType as? TupleType {
+            if tupleType.elements.count == 1 {
+                if let composition = tupleType.elements[0].type as? ProtocolCompositionType {
+                    handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: composition)
+                    return
+                }
+            }
+
+        }
+
+        if let protocolComposition = optionalType.wrappedType as? ProtocolCompositionType {
+            logger.debug("Treating \(identifierPat.identifier.description) as an optional composite protocol type")
+            handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: protocolComposition, optional: true)
+            return
+        }
+
+        builder.addProperty(ofType: optionalType.wrappedType.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                    optional: true,
+                    tuple: false
+                ))
+    }
+
+    private func handleUnwrappedOptionalPropertyDeclaration(identifierPat: IdentifierPattern, unwrappedOptional: ImplicitlyUnwrappedOptionalType) {
+        logger.debug("Impl Unwrapped Optional - wrapped is :  \(unwrappedOptional.wrappedType)")
+
+        if let protocolComposition = unwrappedOptional.wrappedType as? ProtocolCompositionType {
+            logger.debug("Treating \(identifierPat.identifier.description) as an unwrapped optional composite protocol type")
+            handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: protocolComposition)
+            return
+        }
+
+        builder.addProperty(ofType: unwrappedOptional.wrappedType.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                    optional: true,
+                    tuple: false
+                ))
+    }
+
     public func visit(_ declaration: VariableDeclaration) throws -> Bool {
 
         let body: VariableDeclaration.Body = declaration.body
@@ -112,26 +173,32 @@ public class SystemModellingVisitor: ASTVisitor {
             logger.debug("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
             if let targetClass = context.currentType, let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
              
-                var optionalWrappedType: String? = nil
+                logger.debug("var property type=\(type(of: typeAnnotation.type)), name=\(identifierPat.identifier.description)")
+
+                if let protocolComposition = typeAnnotation.type as? ProtocolCompositionType {
+                    handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: protocolComposition)
+                    return true
+                }
+
                 if let optionalType = typeAnnotation.type as? OptionalType {
-                    logger.debug("Optional - wrapped is :  \(optionalType.wrappedType)")
-                    optionalWrappedType = optionalType.wrappedType.description
+                    handleOptionalPropertyDeclaration(identifierPat: identifierPat, optionalType: optionalType)
+                    return true
                 }
 
                 if let unwrappedOptional = typeAnnotation.type as? ImplicitlyUnwrappedOptionalType {
-                    logger.debug("Impl Unwrapped Optional - wrapped is :  \(unwrappedOptional.wrappedType)")
-                    optionalWrappedType = unwrappedOptional.wrappedType.description
+                    handleUnwrappedOptionalPropertyDeclaration(identifierPat: identifierPat, unwrappedOptional: unwrappedOptional)
+                    return true
                 }
 
                 logger.debug("tuple?  \(typeAnnotation.type is TupleType)")
 
                 let propertyName = identifierPat.identifier.description
-                let propertyType = optionalWrappedType == nil ? typeAnnotation.type.description : optionalWrappedType!
+                let propertyType = typeAnnotation.type.description
 
                 logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
 
                 builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
-                    optional: optionalWrappedType != nil,
+                    optional: false,
                     tuple: (typeAnnotation.type is TupleType)
                 ))
 

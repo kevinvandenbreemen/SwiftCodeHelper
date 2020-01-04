@@ -13,4 +13,7 @@ class CabinetOfCuriosities {
 
     var implicitlyUnwrapped: String!
 
+    var conformsToMultipleProtocols: AProtocol & Driver
+    var conformsToMultipleProtocolsOpt: (AProtocol & Driver)?
+
 }
