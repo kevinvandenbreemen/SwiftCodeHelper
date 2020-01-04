@@ -128,6 +128,14 @@ public class SystemModellingVisitor: ASTVisitor {
                 }
             }
 
+            else {
+                builder.addProperty(ofType: "Tuple", to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                    optional: true,
+                    tuple: true
+                ))
+                return
+            }
+
         }
 
         if let protocolComposition = optionalType.wrappedType as? ProtocolCompositionType {

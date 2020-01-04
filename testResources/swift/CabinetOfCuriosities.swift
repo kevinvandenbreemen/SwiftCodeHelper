@@ -15,5 +15,6 @@ class CabinetOfCuriosities {
 
     var conformsToMultipleProtocols: AProtocol & Driver
     var conformsToMultipleProtocolsOpt: (AProtocol & Driver)?
+    var optionalTuple: (calculator: CosmicCalculator, name: String)?
 
 }
