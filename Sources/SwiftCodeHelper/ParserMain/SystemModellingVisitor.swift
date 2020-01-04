@@ -117,13 +117,16 @@ public class SystemModellingVisitor: ASTVisitor {
                     optionalWrappedType = optionalType.wrappedType.description
                 }
 
+                logger.debug("tuple?  \(typeAnnotation.type is TupleType)")
+
                 let propertyName = identifierPat.identifier.description
                 let propertyType = optionalWrappedType == nil ? typeAnnotation.type.description : optionalWrappedType!
 
                 logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
 
                 builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
-                    optional: optionalWrappedType != nil
+                    optional: optionalWrappedType != nil,
+                    tuple: (typeAnnotation.type is TupleType)
                 ))
 
             }
