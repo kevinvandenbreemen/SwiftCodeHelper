@@ -3,5 +3,6 @@
 class CabinetOfCuriosities {
 
     var tupleWithCalculator: (calculator: CosmicCalculator, name: String)
+    let tupleWithCalculatorConst: (calculator: CosmicCalculator, name: String)
 
 }

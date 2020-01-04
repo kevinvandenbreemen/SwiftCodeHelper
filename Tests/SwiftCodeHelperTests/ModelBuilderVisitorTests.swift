@@ -239,6 +239,34 @@ class ModelBuilderVisitorTests: XCTestCase {
 
     }
 
+    func testCanDetectTupleConstantDeclarations() {
+        let builder = SystemModelBuilder()
+        let visitor = SystemModellingVisitor(builder: builder)
+        let parser = SourceFileParser(filePath: "./testResources/swift/CabinetOfCuriosities.swift", visitor: visitor)
+
+        parser.parse()
+
+        guard let cabinetOfCuriosities = builder.systemModel.classes.first(where: { clz in 
+            return clz.name == "CabinetOfCuriosities"
+        }) else {
+            XCTFail("Could not get class")
+            return
+        }
+
+        guard let property = cabinetOfCuriosities.propertiesForDisplay.first(where: {$0.name == "tupleWithCalculatorConst"}) else {
+            XCTFail("System should have found property")
+            return
+        }
+
+        guard let additionalDetails = property.additionalDetails else {
+            XCTFail("Additional details details not found")
+            return
+        }
+
+        XCTAssertTrue(additionalDetails.tuple, "Property should be a tuple")
+
+    }
+
     static var allTests = [
         ("Can load a class from a swift file", testCanLoadAClassFromASwiftFile),
         ("Can load a field on a class", testCanLoadFieldOfAClass),
@@ -250,6 +278,7 @@ class ModelBuilderVisitorTests: XCTestCase {
         ("Properly flags optional fields", testPropertyPopulatesOptionalFlagOnOptionalFields),
         ("Property detects and flags optional constants", testDetectsOptionalLetProperties),
         ("Can load tuple vars", testCanDetectTupleDeclarations),
+        ("Can detect tuple constants", testCanDetectTupleConstantDeclarations),
     ]
 
 }

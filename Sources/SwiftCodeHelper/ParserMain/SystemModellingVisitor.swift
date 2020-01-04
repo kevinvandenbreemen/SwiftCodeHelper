@@ -87,7 +87,8 @@ public class SystemModellingVisitor: ASTVisitor {
             logger.debug("[\(currentType)] add const '\(propertyName)' of type '\(propertyType)'")
 
             builder.addProperty(ofType: propertyType, to: currentType, named: propertyName, additionalDetails: PropertyDetails(
-                    optional: optionalWrappedType != nil
+                    optional: optionalWrappedType != nil,
+                    tuple: typeAnnotation.type is TupleType
                 ))
 
         }
