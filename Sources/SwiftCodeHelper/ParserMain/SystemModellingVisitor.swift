@@ -90,7 +90,8 @@ public class SystemModellingVisitor: ASTVisitor {
 
             builder.addProperty(ofType: propertyType, to: currentType, named: propertyName, additionalDetails: PropertyDetails(
                     optional: optionalWrappedType != nil,
-                    tuple: typeAnnotation.type is TupleType
+                    tuple: typeAnnotation.type is TupleType,
+                    function: typeAnnotation.type is FunctionType
                 ))
 
         }
@@ -124,6 +125,15 @@ public class SystemModellingVisitor: ASTVisitor {
             if tupleType.elements.count == 1 {
                 if let composition = tupleType.elements[0].type as? ProtocolCompositionType {
                     handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: composition)
+                    return
+                }
+                if let _ = tupleType.elements[0].type as? FunctionType {
+                    builder.addProperty(ofType: tupleType.elements[0].type.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                        optional: true,
+                        tuple: false,
+                        function: true
+                    ))
+
                     return
                 }
             }
@@ -207,7 +217,8 @@ public class SystemModellingVisitor: ASTVisitor {
 
                 builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
                     optional: false,
-                    tuple: (typeAnnotation.type is TupleType)
+                    tuple: (typeAnnotation.type is TupleType),
+                    function: typeAnnotation.type is FunctionType
                 ))
 
             }

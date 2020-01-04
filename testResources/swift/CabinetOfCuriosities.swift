@@ -17,4 +17,8 @@ class CabinetOfCuriosities {
     var conformsToMultipleProtocolsOpt: (AProtocol & Driver)?
     var optionalTuple: (calculator: CosmicCalculator, name: String)?
 
+    var someFunction: (Bool) -> Void
+    var someFunctionOpt: ((Bool) -> Void)?
+    let someFunctionReq: (Bool) -> Void
+
 }
