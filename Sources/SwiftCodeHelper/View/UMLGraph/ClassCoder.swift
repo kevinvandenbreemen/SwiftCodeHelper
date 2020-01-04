@@ -43,7 +43,15 @@ public class ClassCoder {
         })
         logger.debug("Including properties for display as follows:\n\(propertiesForDisplay)")
         propertiesForDisplay.forEach({forDisplay in 
-            properties += "\(forDisplay.type) \(forDisplay.name);\n"
+
+            var typeName = forDisplay.type
+            if let additionalDetails = forDisplay.additionalDetails {
+                if additionalDetails.tuple {
+                    typeName = "Tuple"
+                }
+            }            
+
+            properties += "\(typeName) \(forDisplay.name);\n"
         })
 
         return 
