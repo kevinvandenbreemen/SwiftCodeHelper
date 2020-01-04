@@ -5,4 +5,12 @@ class CabinetOfCuriosities {
     var tupleWithCalculator: (calculator: CosmicCalculator, name: String)
     let tupleWithCalculatorConst: (calculator: CosmicCalculator, name: String)
 
+    var computedString: String {
+        get {
+            return "ComputedString"
+        }
+    }
+
+    var implicitlyUnwrapped: String!
+
 }

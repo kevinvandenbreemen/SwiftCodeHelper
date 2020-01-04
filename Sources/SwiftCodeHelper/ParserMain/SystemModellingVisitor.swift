@@ -118,6 +118,11 @@ public class SystemModellingVisitor: ASTVisitor {
                     optionalWrappedType = optionalType.wrappedType.description
                 }
 
+                if let unwrappedOptional = typeAnnotation.type as? ImplicitlyUnwrappedOptionalType {
+                    logger.debug("Impl Unwrapped Optional - wrapped is :  \(unwrappedOptional.wrappedType)")
+                    optionalWrappedType = unwrappedOptional.wrappedType.description
+                }
+
                 logger.debug("tuple?  \(typeAnnotation.type is TupleType)")
 
                 let propertyName = identifierPat.identifier.description
