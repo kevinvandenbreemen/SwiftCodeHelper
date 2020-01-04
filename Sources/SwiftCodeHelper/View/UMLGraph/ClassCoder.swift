@@ -48,6 +48,8 @@ public class ClassCoder {
             if let additionalDetails = forDisplay.additionalDetails {
                 if additionalDetails.tuple {
                     typeName = "Tuple"
+                } else if additionalDetails.function {
+                    typeName = "Function"
                 }
             }            
 
