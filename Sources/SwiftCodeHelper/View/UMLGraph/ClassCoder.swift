@@ -50,6 +50,8 @@ public class ClassCoder {
                     typeName = "Tuple"
                 } else if additionalDetails.function {
                     typeName = "Function"
+                } else if additionalDetails.array {
+                    typeName = "List"
                 }
             }            
 

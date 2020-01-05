@@ -300,6 +300,41 @@ class ModelBuilderVisitorTests: XCTestCase {
 
     }
 
+    func testCanDetectArrays() {
+
+        let builder = SystemModelBuilder()
+        let visitor = SystemModellingVisitor(builder: builder)
+        let parser = SourceFileParser(filePath: "./testResources/swift/CabinetOfCuriosities.swift", visitor: visitor)
+
+        parser.parse()
+
+        guard let cabinetOfCuriosities = builder.systemModel.classes.first(where: { clz in 
+            return clz.name == "CabinetOfCuriosities"
+        }) else {
+            XCTFail("Could not get class")
+            return
+        }
+
+        for propertyName in ["array", "arrayCnst", "arrayOptCnst", "arrayOpt", "arrayOfTuple", "arrayOfTupleOpt", "arrayOfTupleCnst"] {
+
+            guard let property = cabinetOfCuriosities.propertiesForDisplay.first(where: {$0.name == propertyName}) else {
+                XCTFail("System should have found property \(propertyName)")
+                return
+            }
+
+            guard let additionalDetails = property.additionalDetails else {
+                XCTFail("Additional details details not found")
+                return
+            }
+
+            XCTAssertFalse(additionalDetails.tuple)
+            XCTAssertFalse(additionalDetails.function)
+            XCTAssertTrue(additionalDetails.array, "Field '\(propertyName)' should be an array")
+
+        }
+
+    }
+
     static var allTests = [
         ("Can load a class from a swift file", testCanLoadAClassFromASwiftFile),
         ("Can load a field on a class", testCanLoadFieldOfAClass),
@@ -313,6 +348,7 @@ class ModelBuilderVisitorTests: XCTestCase {
         ("Can load tuple vars", testCanDetectTupleDeclarations),
         ("Can detect tuple constants", testCanDetectTupleConstantDeclarations),
         ("Can detect functions", testCanDetectFunctions),
+        ("Can detect arrays", testCanDetectArrays),
     ]
 
 }
