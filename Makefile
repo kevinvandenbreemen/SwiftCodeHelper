@@ -8,7 +8,7 @@ TESTING_DIR = $(OUTPUT_DIR)/debug
 C_OUTPUT_DIR = cBuild
 LINKER_FLAGS = -lm -lSDL2
 
-.PHONY: cleanup release buildAndTest cModuleTest cCleanup test
+.PHONY: cleanup release buildAndTest cModuleTest cCleanup test tryCacao
 
 release: cleanup
 	rm -rf ./.build
@@ -37,3 +37,7 @@ cCleanup:
 	@echo "Prep for C code testing"
 	-rm -rf $(C_OUTPUT_DIR)
 	mkdir $(C_OUTPUT_DIR)
+
+tryCacao: test cleanup
+	swift build
+	swift run CacaoDisplayDemo -f ./testResources/swift/
