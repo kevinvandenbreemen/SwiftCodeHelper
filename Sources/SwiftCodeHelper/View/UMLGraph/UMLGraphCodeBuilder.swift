@@ -12,7 +12,7 @@ public class UMLGraphCodeBuilder: ModelDisplay {
 
     public init(){}
 
-    public func display(model: SystemModel) {
+    public func display(model: SystemModel) -> Bool {
 
         //  See https://www.spinellis.gr/umlgraph/doc/indexw.html for specifics on how to code for this framework
         var generatedCode: String = 
@@ -39,7 +39,14 @@ class UMLOptions {}
             generatedCode += "\n\(generator.generateCode())"
         }
 
-        pumper.pumpOut(with: generatedCode)
+        if !pumper.pumpOut(with: generatedCode) {
+            debugPrint("One or more errors occurred")
+            return false
+        }
+
+        print("UML Diagrammer Step Succeeded")
+
+        return true
         
     }
 }

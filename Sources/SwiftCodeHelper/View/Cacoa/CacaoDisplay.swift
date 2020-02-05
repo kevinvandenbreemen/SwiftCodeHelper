@@ -12,7 +12,7 @@ public class CacaoDisplay: ModelDisplay {
         self.logger.logLevel = .debug
     }
 
-    public func display(model: SystemModel) {
+    public func display(model: SystemModel) -> Bool {
         logger.debug("Display updating model to \(model)")
 
         let viewController = DrawingViewController.init(model: model)
@@ -21,6 +21,8 @@ public class CacaoDisplay: ModelDisplay {
 
         logger.debug("Starting the app!")
         UIApplicationMain(delegate: CacaoAppDelegate.init(drawingViewController: viewController), options: options)
+
+        return true
     }
 
 }

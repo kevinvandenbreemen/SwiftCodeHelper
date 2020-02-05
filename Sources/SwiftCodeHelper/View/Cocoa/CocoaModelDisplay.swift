@@ -10,8 +10,8 @@ import SwiftSoftwareSystemModel
 
 class CocoaModelDisplay: ModelDisplay {
     
-    func display(model: SystemModel) {
-            
+    func display(model: SystemModel) -> Bool {
+        return false
     }
 
 }

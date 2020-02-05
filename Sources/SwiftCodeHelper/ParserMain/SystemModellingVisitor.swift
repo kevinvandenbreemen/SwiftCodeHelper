@@ -68,6 +68,15 @@ public class SystemModellingVisitor: ASTVisitor {
         
         return true
     }
+
+    private func handleArrayDeclaration(identifierPat: IdentifierPattern, arrayType: ArrayType, optional: Bool) {
+
+        let type = arrayType.elementType
+        builder.addProperty(ofType: type.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+            optional: optional, tuple: false, function: false, array: true
+        ))
+
+    }
     
     public func visit(_ constant: ConstantDeclaration) throws -> Bool {
 
@@ -75,25 +84,113 @@ public class SystemModellingVisitor: ASTVisitor {
             initializer.pattern is IdentifierPattern
         }), let typeAnnotation = (patternInitializer.pattern as! IdentifierPattern).typeAnnotation {
 
-            var optionalWrappedType: String? = nil
+            logger.debug("let property type=\(typeAnnotation.type), name=\((patternInitializer.pattern as! IdentifierPattern).identifier.description)")
+
+            if let arrayType = typeAnnotation.type as? ArrayType {
+                handleArrayDeclaration(identifierPat: (patternInitializer.pattern as! IdentifierPattern), arrayType: arrayType, optional: false)
+                return true
+            }
+
             if let optionalType = typeAnnotation.type as? OptionalType {
-                logger.debug("Optional - wrapped is :  \(optionalType.wrappedType)")
-                optionalWrappedType = optionalType.wrappedType.description
+                handleOptionalPropertyDeclaration(identifierPat: (patternInitializer.pattern as! IdentifierPattern), optionalType: optionalType)
+                return true
             }
 
             let propertyName = (patternInitializer.pattern as! IdentifierPattern).identifier.description
-            let propertyType = optionalWrappedType == nil ? typeAnnotation.type.description : optionalWrappedType!
+            let propertyType = typeAnnotation.type
 
             logger.debug("[\(currentType)] add const '\(propertyName)' of type '\(propertyType)'")
 
-            builder.addProperty(ofType: propertyType, to: currentType, named: propertyName, additionalDetails: PropertyDetails(
-                    optional: optionalWrappedType != nil,
-                    tuple: typeAnnotation.type is TupleType
+            builder.addProperty(ofType: propertyType.description, to: currentType, named: propertyName, additionalDetails: PropertyDetails(
+                    optional: false,
+                    tuple: typeAnnotation.type is TupleType,
+                    function: typeAnnotation.type is FunctionType
                 ))
 
         }
 
         return true
+    }
+
+    private func handleProtocolCompositionVariableDeclaration(identifierPat: IdentifierPattern, protocolComposition: ProtocolCompositionType, optional: Bool = false) {
+
+        guard let targetClass = context.currentType else {
+            logger.error("Attempt to add protocol composition field declaration when no current class")
+            return
+        }
+
+        let propertyName = identifierPat.identifier.description
+        let propertyType = "ProtocolComposition"
+
+
+        builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
+                    optional: false,
+                    tuple: false
+                ))
+
+    }
+
+    private func handleOptionalPropertyDeclaration(identifierPat: IdentifierPattern, optionalType: OptionalType) {
+        logger.debug("Optional - wrapped type is :  \(type(of: optionalType.wrappedType))")
+        
+
+        if let tupleType = optionalType.wrappedType as? TupleType {
+            if tupleType.elements.count == 1 {
+                if let composition = tupleType.elements[0].type as? ProtocolCompositionType {
+                    handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: composition)
+                    return
+                }
+                if let _ = tupleType.elements[0].type as? FunctionType {
+                    builder.addProperty(ofType: tupleType.elements[0].type.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                        optional: true,
+                        tuple: false,
+                        function: true
+                    ))
+
+                    return
+                }
+            }
+
+            else {
+                builder.addProperty(ofType: "Tuple", to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                    optional: true,
+                    tuple: true
+                ))
+                return
+            }
+
+        }
+
+        if let arrayType = optionalType.wrappedType as? ArrayType {
+            handleArrayDeclaration(identifierPat: identifierPat, arrayType: arrayType, optional: true)
+            return
+        }
+
+        if let protocolComposition = optionalType.wrappedType as? ProtocolCompositionType {
+            logger.debug("Treating \(identifierPat.identifier.description) as an optional composite protocol type")
+            handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: protocolComposition, optional: true)
+            return
+        }
+
+        builder.addProperty(ofType: optionalType.wrappedType.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                    optional: true,
+                    tuple: false
+                ))
+    }
+
+    private func handleUnwrappedOptionalPropertyDeclaration(identifierPat: IdentifierPattern, unwrappedOptional: ImplicitlyUnwrappedOptionalType) {
+        logger.debug("Impl Unwrapped Optional - wrapped is :  \(unwrappedOptional.wrappedType)")
+
+        if let protocolComposition = unwrappedOptional.wrappedType as? ProtocolCompositionType {
+            logger.debug("Treating \(identifierPat.identifier.description) as an unwrapped optional composite protocol type")
+            handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: protocolComposition)
+            return
+        }
+
+        builder.addProperty(ofType: unwrappedOptional.wrappedType.description, to: context.currentType!, named: identifierPat.identifier.description, additionalDetails: PropertyDetails(
+                    optional: true,
+                    tuple: false
+                ))
     }
 
     public func visit(_ declaration: VariableDeclaration) throws -> Bool {
@@ -112,27 +209,39 @@ public class SystemModellingVisitor: ASTVisitor {
             logger.debug("Location = \(patternInitializer[0].pattern.sourceLocation.identifier)")
             if let targetClass = context.currentType, let identifierPat = patternInitializer[0].pattern as? IdentifierPattern, let typeAnnotation = identifierPat.typeAnnotation {
              
-                var optionalWrappedType: String? = nil
+                logger.debug("var property type=\(type(of: typeAnnotation.type)), name=\(identifierPat.identifier.description)")
+
+                if let arrayType = typeAnnotation.type as? ArrayType {
+                    handleArrayDeclaration(identifierPat: identifierPat, arrayType: arrayType, optional: false)
+                    return true
+                }
+
+                if let protocolComposition = typeAnnotation.type as? ProtocolCompositionType {
+                    handleProtocolCompositionVariableDeclaration(identifierPat: identifierPat, protocolComposition: protocolComposition)
+                    return true
+                }
+
                 if let optionalType = typeAnnotation.type as? OptionalType {
-                    logger.debug("Optional - wrapped is :  \(optionalType.wrappedType)")
-                    optionalWrappedType = optionalType.wrappedType.description
+                    handleOptionalPropertyDeclaration(identifierPat: identifierPat, optionalType: optionalType)
+                    return true
                 }
 
                 if let unwrappedOptional = typeAnnotation.type as? ImplicitlyUnwrappedOptionalType {
-                    logger.debug("Impl Unwrapped Optional - wrapped is :  \(unwrappedOptional.wrappedType)")
-                    optionalWrappedType = unwrappedOptional.wrappedType.description
+                    handleUnwrappedOptionalPropertyDeclaration(identifierPat: identifierPat, unwrappedOptional: unwrappedOptional)
+                    return true
                 }
 
                 logger.debug("tuple?  \(typeAnnotation.type is TupleType)")
 
                 let propertyName = identifierPat.identifier.description
-                let propertyType = optionalWrappedType == nil ? typeAnnotation.type.description : optionalWrappedType!
+                let propertyType = typeAnnotation.type.description
 
                 logger.info("Adding property '\(propertyName): \(propertyType)' to class \(targetClass)")
 
                 builder.addProperty(ofType: propertyType, to: targetClass, named: propertyName, additionalDetails: PropertyDetails(
-                    optional: optionalWrappedType != nil,
-                    tuple: (typeAnnotation.type is TupleType)
+                    optional: false,
+                    tuple: (typeAnnotation.type is TupleType),
+                    function: typeAnnotation.type is FunctionType
                 ))
 
             }

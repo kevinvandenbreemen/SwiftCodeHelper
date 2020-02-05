@@ -4,7 +4,7 @@ public class ConsoleDebuggingModelDisplay: ModelDisplay {
 
     public init(){}
 
-    public func display(model: SystemModel) {
+    public func display(model: SystemModel) -> Bool {
 
         var output: String = "Software System Model\n===========================\n"
 
@@ -21,6 +21,8 @@ public class ConsoleDebuggingModelDisplay: ModelDisplay {
         output += "\n==============================="
 
         print(output)
+
+        return true
 
     }
 

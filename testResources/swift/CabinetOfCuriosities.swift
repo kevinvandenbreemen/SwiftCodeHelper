@@ -13,4 +13,20 @@ class CabinetOfCuriosities {
 
     var implicitlyUnwrapped: String!
 
+    var conformsToMultipleProtocols: AProtocol & Driver
+    var conformsToMultipleProtocolsOpt: (AProtocol & Driver)?
+    var optionalTuple: (calculator: CosmicCalculator, name: String)?
+
+    var someFunction: (Bool) -> Void
+    var someFunctionOpt: ((Bool) -> Void)?
+    let someFunctionReq: (Bool) -> Void
+
+    var array: [Driver]
+    let arrayCnst: [Driver]
+    let arrayOptCnst: [Driver]?
+    var arrayOpt: [Driver]?
+    var arrayOfTuple: [(calculator: CosmicCalculator, name: String)] 
+    var arrayOfTupleOpt: [(calculator: CosmicCalculator, name: String)]?
+    let arrayOfTupleCnst: [(calculator: CosmicCalculator, name: String)]
+
 }

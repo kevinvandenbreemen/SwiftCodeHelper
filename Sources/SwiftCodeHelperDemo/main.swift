@@ -1,5 +1,6 @@
 import SwiftSoftwareSystemModel
 import SwiftCodeHelper
+import Glibc
 
 //  Grab the command line args
 CommandLine.arguments.forEach{ arg in 
@@ -22,7 +23,10 @@ do {
     dirParser.parse()
 } catch let error {
     print(error)
+    exit(1)
 }
 
 let display = UMLGraphCodeBuilder()
-display.display(model:  modelBuilder.systemModel)
+if !display.display(model:  modelBuilder.systemModel) {
+    exit(1)
+}
