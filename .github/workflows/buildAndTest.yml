@@ -19,6 +19,6 @@ jobs:
     - name: Swift Setup
       uses: YOCKOW/Action-setup-swift@v1.1.0
       with:
-        swift-version: '5.1.4'
+        swift-version: '5.2.3'
     - name: Build and Test
       run: make test
